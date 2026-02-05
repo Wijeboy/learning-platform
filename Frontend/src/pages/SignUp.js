@@ -1,7 +1,5 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import Navbar from '../components/Navbar';
-import Footer from '../components/Footer';
 import { registerStudent } from '../services/authService';
 import './SignUp.css';
 
@@ -74,8 +72,6 @@ const SignUp = () => {
 
   return (
     <div className="signup-page">
-      <Navbar />
-      
       <div className="signup-container">
         <div className="signup-card">
           <h2 className="signup-title">Get Started Now</h2>
@@ -176,8 +172,6 @@ const SignUp = () => {
           </p>
         </div>
       </div>
-
-      <Footer />
     </div>
   );
 };
