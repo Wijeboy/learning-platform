@@ -1,0 +1,104 @@
+const API_URL = 'http://localhost:5001/api';
+
+// Register a new student
+export const registerStudent = async (studentData) => {
+  try {
+    const response = await fetch(`${API_URL}/auth/register`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(studentData),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || 'Registration failed');
+    }
+
+    // Store token in localStorage
+    if (data.data.token) {
+      localStorage.setItem('token', data.data.token);
+      localStorage.setItem('user', JSON.stringify(data.data));
+    }
+
+    return data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+// Login student
+export const loginStudent = async (credentials) => {
+  try {
+    const response = await fetch(`${API_URL}/auth/login`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(credentials),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || 'Login failed');
+    }
+
+    // Store token in localStorage
+    if (data.data.token) {
+      localStorage.setItem('token', data.data.token);
+      localStorage.setItem('user', JSON.stringify(data.data));
+    }
+
+    return data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+// Get current user profile
+export const getProfile = async () => {
+  try {
+    const token = localStorage.getItem('token');
+
+    if (!token) {
+      throw new Error('No token found');
+    }
+
+    const response = await fetch(`${API_URL}/auth/me`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || 'Failed to fetch profile');
+    }
+
+    return data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+// Logout
+export const logout = () => {
+  localStorage.removeItem('token');
+  localStorage.removeItem('user');
+};
+
+// Check if user is authenticated
+export const isAuthenticated = () => {
+  return !!localStorage.getItem('token');
+};
+
+// Get stored user data
+export const getStoredUser = () => {
+  const user = localStorage.getItem('user');
+  return user ? JSON.parse(user) : null;
+};

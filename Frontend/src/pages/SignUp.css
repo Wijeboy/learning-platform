@@ -114,6 +114,32 @@
   transform: translateY(0);
 }
 
+.btn-create-account:disabled {
+  background-color: #666;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.alert {
+  padding: 0.8rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+.alert-error {
+  background-color: #fee;
+  color: #c33;
+  border: 1px solid #fcc;
+}
+
+.alert-success {
+  background-color: #efe;
+  color: #3a3;
+  border: 1px solid #cfc;
+}
+
 .social-signin {
   display: flex;
   gap: 1rem;

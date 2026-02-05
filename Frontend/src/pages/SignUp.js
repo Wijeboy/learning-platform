@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import { registerStudent } from '../services/authService';
 import './SignUp.css';
 
 const SignUp = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     name: '',
     phoneNumber: '',
@@ -12,6 +14,9 @@ const SignUp = () => {
     password: '',
     agreeToTerms: false
   });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -19,16 +24,42 @@ const SignUp = () => {
       ...prevState,
       [name]: type === 'checkbox' ? checked : value
     }));
+    // Clear error when user starts typing
+    if (error) setError('');
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setError('');
+    setSuccess('');
+
     if (!formData.agreeToTerms) {
-      alert('Please agree to the terms & policy');
+      setError('Please agree to the terms & policy');
       return;
     }
-    console.log('Form submitted:', formData);
-    // Add your API call here
+
+    setLoading(true);
+
+    try {
+      const response = await registerStudent({
+        name: formData.name,
+        email: formData.email,
+        phoneNumber: formData.phoneNumber,
+        password: formData.password
+      });
+
+      setSuccess('Registration successful! Redirecting...');
+      
+      // Redirect after 2 seconds
+      setTimeout(() => {
+        navigate('/');
+      }, 2000);
+
+    } catch (err) {
+      setError(err.message || 'Registration failed. Please try again.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleGoogleSignIn = () => {
@@ -48,6 +79,9 @@ const SignUp = () => {
       <div className="signup-container">
         <div className="signup-card">
           <h2 className="signup-title">Get Started Now</h2>
+          
+          {error && <div className="alert alert-error">{error}</div>}
+          {success && <div className="alert alert-success">{success}</div>}
           
           <form onSubmit={handleSubmit} className="signup-form">
             <div className="form-group">
@@ -113,8 +147,8 @@ const SignUp = () => {
               <label htmlFor="agreeToTerms">I agree to the terms & policy</label>
             </div>
 
-            <button type="submit" className="btn-create-account">
-              Create Account
+            <button type="submit" className="btn-create-account" disabled={loading}>
+              {loading ? 'Creating Account...' : 'Create Account'}
             </button>
           </form>
 
