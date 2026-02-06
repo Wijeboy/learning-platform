@@ -1,11 +1,18 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { FiSearch, FiShoppingCart, FiUser } from 'react-icons/fi';
+import { useAuth } from '../context/AuthContext';
 import './Navbar.css';
 
 const Navbar = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const navigate = useNavigate();
+  const { isAuth, user, logout } = useAuth();
+
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
+  };
 
   const handleSearch = () => {
     if (searchQuery.trim()) {
@@ -59,9 +66,16 @@ const Navbar = () => {
           <Link to="/cart" className="icon-link">
             <FiShoppingCart className="nav-icon" />
           </Link>
-          <Link to="/profile" className="icon-link">
-            <FiUser className="nav-icon" />
-          </Link>
+          {isAuth ? (
+            <div className="user-menu">
+              <span className="user-name">Hi, {user?.firstName}</span>
+              <button onClick={handleLogout} className="logout-btn">LOGOUT</button>
+            </div>
+          ) : (
+            <Link to="/login" className="icon-link">
+              <FiUser className="nav-icon" />
+            </Link>
+          )}
         </div>
       </div>
     </nav>

@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { loginStudent } from '../services/authService';
+import { useAuth } from '../context/AuthContext';
 import './Login.css';
 
 const Login = () => {
   const navigate = useNavigate();
+  const { login } = useAuth();
   const [formData, setFormData] = useState({
     email: '',
     password: ''
@@ -38,6 +40,9 @@ const Login = () => {
         password: formData.password
       });
 
+      // Set user in auth context
+      login(response.data);
+
       // Redirect to home or dashboard after successful login
       setTimeout(() => {
         navigate('/');
@@ -60,12 +65,12 @@ const Login = () => {
           
           <form onSubmit={handleSubmit} className="login-form">
             <div className="form-group">
-              <label htmlFor="email">User Name</label>
+              <label htmlFor="email">Email</label>
               <input
                 type="email"
                 id="email"
                 name="email"
-                placeholder="Enter your User Name"
+                placeholder="Enter your email"
                 value={formData.email}
                 onChange={handleChange}
                 required
