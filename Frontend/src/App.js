@@ -5,6 +5,7 @@ import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import SignUp from './pages/SignUp';
 import Login from './pages/Login';
+import InstructorDetails from './pages/InstructorDetails';
 import './App.css';
 
 function App() {
@@ -18,6 +19,7 @@ function App() {
               <Route path="/" element={<Login />} />
               <Route path="/login" element={<Login />} />
               <Route path="/signup" element={<SignUp />} />
+              <Route path="/InstructorDetails" element={<InstructorDetails />} />
               {/* Add more routes as needed */}
             </Routes>
           </main>
