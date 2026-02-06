@@ -1,6 +1,7 @@
 const Admin = require('../models/Admin');
 const Student = require('../models/Student');
 const Instructor = require('../models/Instructor');
+const bcrypt = require('bcryptjs');
 
 // @desc    Get all users (students, instructors, admins)
 // @route   GET /api/admin/users
@@ -254,6 +255,124 @@ exports.toggleUserStatus = async (req, res) => {
     res.status(500).json({
       success: false,
       message: 'Error toggling user status',
+      error: error.message
+    });
+  }
+};
+
+// @desc    Update admin profile
+// @route   PUT /api/admin/profile
+// @access  Private/Admin
+exports.updateAdminProfile = async (req, res) => {
+  try {
+    const { firstName, lastName, email, currentPassword, newPassword } = req.body;
+
+    const admin = await Admin.findById(req.admin._id).select('+password');
+
+    if (!admin) {
+      return res.status(404).json({
+        success: false,
+        message: 'Admin not found'
+      });
+    }
+
+    // Update basic info
+    if (firstName) admin.firstName = firstName;
+    if (lastName) admin.lastName = lastName;
+    
+    // Check if email is being changed and if it's already taken
+    if (email && email !== admin.email) {
+      const emailExists = await Admin.findOne({ email });
+      if (emailExists) {
+        return res.status(400).json({
+          success: false,
+          message: 'Email already in use'
+        });
+      }
+      admin.email = email;
+    }
+
+    // Update password if provided
+    if (currentPassword && newPassword) {
+      const isMatch = await bcrypt.compare(currentPassword, admin.password);
+      if (!isMatch) {
+        return res.status(400).json({
+          success: false,
+          message: 'Current password is incorrect'
+        });
+      }
+      admin.password = newPassword;
+    }
+
+    await admin.save();
+
+    // Return admin without password but with userType
+    const updatedAdmin = await Admin.findById(admin._id).select('-password');
+    const adminObject = updatedAdmin.toObject();
+    adminObject.userType = 'admin';
+
+    res.status(200).json({
+      success: true,
+      message: 'Profile updated successfully',
+      data: {
+        admin: adminObject
+      }
+    });
+  } catch (error) {
+    console.error('Profile update error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error updating profile',
+      error: error.message
+    });
+  }
+};
+
+// @desc    Upload admin profile photo
+// @route   POST /api/admin/profile-photo
+// @access  Private/Admin
+exports.uploadProfilePhoto = async (req, res) => {
+  try {
+    console.log('Upload photo request received');
+    console.log('Body:', req.body);
+    
+    if (!req.body.photo) {
+      console.log('No photo in request body');
+      return res.status(400).json({
+        success: false,
+        message: 'Please provide a photo'
+      });
+    }
+
+    const admin = await Admin.findById(req.admin._id);
+
+    if (!admin) {
+      console.log('Admin not found:', req.admin._id);
+      return res.status(404).json({
+        success: false,
+        message: 'Admin not found'
+      });
+    }
+
+    // In a real application, you would upload to cloud storage (AWS S3, Cloudinary, etc.)
+    // For now, we'll store the base64 string directly
+    admin.profilePhoto = req.body.photo;
+    await admin.save();
+    
+    console.log('Photo saved successfully');
+
+    res.status(200).json({
+      success: true,
+      message: 'Profile photo updated successfully',
+      data: {
+        profilePhoto: admin.profilePhoto
+      }
+    });
+  } catch (error) {
+    console.error('Upload photo error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error uploading profile photo',
       error: error.message
     });
   }

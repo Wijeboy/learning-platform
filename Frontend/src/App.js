@@ -12,6 +12,7 @@ import ManageInstructors from './pages/admin/ManageInstructors';
 import ManageAdmins from './pages/admin/ManageAdmins';
 import CreateAdmin from './pages/admin/CreateAdmin';
 import CreateInstructor from './pages/admin/CreateInstructor';
+import AdminProfile from './pages/admin/AdminProfile';
 import './App.css';
 
 function App() {
@@ -51,6 +52,7 @@ function App() {
           {/* Admin Routes with Sidebar Layout */}
           <Route path="/admin" element={<AdminLayout />}>
             <Route path="dashboard" element={<AdminDashboard />} />
+            <Route path="profile" element={<AdminProfile />} />
             <Route path="manage-students" element={<ManageStudents />} />
             <Route path="manage-instructors" element={<ManageInstructors />} />
             <Route path="manage-admins" element={<ManageAdmins />} />

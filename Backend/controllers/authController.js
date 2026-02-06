@@ -133,20 +133,33 @@ exports.login = async (req, res) => {
     // Generate token
     const token = generateToken(user._id);
 
+    // Build response data based on user type
+    const responseData = {
+      id: user._id,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+      role: user.role,
+      userType: userType,
+      token
+    };
+
+    // Add profilePhoto for admins
+    if (userType === 'admin' && user.profilePhoto) {
+      responseData.profilePhoto = user.profilePhoto;
+    }
+
+    // Add phone number for students and instructors
+    if (user.phoneNumber) {
+      responseData.phoneNumber = user.phoneNumber;
+      responseData.countryCode = user.countryCode;
+    }
+
     // Send response with user type
     res.status(200).json({
       success: true,
       message: 'Login successful',
-      data: {
-        id: user._id,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        email: user.email,
-        phoneNumber: user.phoneNumber,
-        role: user.role,
-        userType: userType,
-        token
-      }
+      data: responseData
     });
 
   } catch (error) {

@@ -6,12 +6,18 @@ const {
   createInstructor,
   updateUser,
   deleteUser,
-  toggleUserStatus
+  toggleUserStatus,
+  updateAdminProfile,
+  uploadProfilePhoto
 } = require('../controllers/adminController');
 const { adminProtect } = require('../middleware/adminMiddleware');
 
 // All routes require admin authentication
 router.use(adminProtect);
+
+// Admin profile routes
+router.put('/profile', updateAdminProfile);
+router.post('/profile-photo', uploadProfilePhoto);
 
 // Get all users
 router.get('/users', getAllUsers);

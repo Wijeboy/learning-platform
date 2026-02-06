@@ -173,3 +173,83 @@ export const toggleUserStatus = async (userType, id) => {
     throw error;
   }
 };
+
+// Update admin profile
+export const updateAdminProfile = async (profileData) => {
+  try {
+    const token = localStorage.getItem('token');
+
+    if (!token) {
+      throw new Error('No token found');
+    }
+
+    const response = await fetch(`${API_URL}/admin/profile`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+      body: JSON.stringify(profileData),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      const error = new Error(data.message || 'Failed to update profile');
+      error.response = { data };
+      throw error;
+    }
+
+    return data;
+  } catch (error) {
+    console.error('Service error:', error);
+    throw error;
+  }
+};
+
+// Upload profile photo
+export const uploadProfilePhoto = async (formData) => {
+  try {
+    const token = localStorage.getItem('token');
+
+    if (!token) {
+      throw new Error('No token found');
+    }
+
+    // Convert file to base64
+    const file = formData.get('photo');
+    console.log('File to upload:', file);
+    
+    const base64 = await new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result);
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+    
+    console.log('Base64 created, length:', base64.length);
+
+    const response = await fetch(`${API_URL}/admin/profile-photo`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+      body: JSON.stringify({ photo: base64 }),
+    });
+
+    const data = await response.json();
+    console.log('Upload response:', data);
+
+    if (!response.ok) {
+      const error = new Error(data.message || 'Failed to upload photo');
+      error.response = { data };
+      throw error;
+    }
+
+    return data;
+  } catch (error) {
+    console.error('Upload service error:', error);
+    throw error;
+  }
+};

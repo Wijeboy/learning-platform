@@ -36,6 +36,10 @@ const adminSchema = new mongoose.Schema({
     default: 'admin',
     enum: ['admin', 'super-admin']
   },
+  profilePhoto: {
+    type: String,
+    default: null
+  },
   isActive: {
     type: Boolean,
     default: true

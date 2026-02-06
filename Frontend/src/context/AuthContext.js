@@ -68,6 +68,12 @@ export const AuthProvider = ({ children }) => {
   }, [isAuth, lastActivity]);
 
   const login = (userData) => {
+    // Store user data in localStorage
+    localStorage.setItem('user', JSON.stringify(userData));
+    if (userData.token) {
+      localStorage.setItem('token', userData.token);
+    }
+    
     setUser(userData);
     setIsAuth(true);
     setLastActivity(Date.now());

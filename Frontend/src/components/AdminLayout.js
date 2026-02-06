@@ -16,6 +16,7 @@ const AdminLayout = () => {
 
   const menuItems = [
     { path: '/admin/dashboard', icon: <FiHome />, label: 'Dashboard' },
+    { path: '/admin/profile', icon: <FiShield />, label: 'My Profile' },
     { path: '/admin/manage-students', icon: <FiUsers />, label: 'Students' },
     { path: '/admin/manage-instructors', icon: <FiUserCheck />, label: 'Instructors' },
     { path: '/admin/manage-admins', icon: <FiShield />, label: 'Admins' },
@@ -35,7 +36,11 @@ const AdminLayout = () => {
 
         <div className="admin-profile">
           <div className="profile-avatar">
-            {user?.firstName?.charAt(0)}{user?.lastName?.charAt(0)}
+            {user?.profilePhoto ? (
+              <img src={user.profilePhoto} alt="Profile" />
+            ) : (
+              <span>{user?.firstName?.charAt(0)}{user?.lastName?.charAt(0)}</span>
+            )}
           </div>
           <div className="profile-info">
             <h3>{user?.firstName} {user?.lastName}</h3>
