@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import SignUp from './pages/SignUp';
+import Login from './pages/Login';
 import './App.css';
 
 function App() {
@@ -12,7 +13,8 @@ function App() {
         <Navbar />
         <main style={{ flex: 1 }}>
           <Routes>
-            <Route path="/" element={<SignUp />} />
+            <Route path="/" element={<Login />} />
+            <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<SignUp />} />
             {/* Add more routes as needed */}
           </Routes>

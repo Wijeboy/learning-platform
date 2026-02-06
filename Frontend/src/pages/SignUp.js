@@ -1,28 +1,195 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { registerStudent } from '../services/authService';
+import { registerStudent, checkEmailExists } from '../services/authService';
+import { countries, validatePhoneNumber } from '../utils/phoneValidation';
 import './SignUp.css';
 
 const SignUp = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    name: '',
+    firstName: '',
+    lastName: '',
+    countryCode: 'LK',
     phoneNumber: '',
     email: '',
     password: '',
+    confirmPassword: '',
     agreeToTerms: false
   });
+
+  const [validation, setValidation] = useState({
+    firstName: { valid: true, message: '' },
+    lastName: { valid: true, message: '' },
+    phoneNumber: { valid: true, message: '' },
+    email: { valid: true, message: '', checking: false },
+    password: { valid: true, message: '' },
+    confirmPassword: { valid: true, message: '' }
+  });
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [emailCheckTimeout, setEmailCheckTimeout] = useState(null);
+
+  // Real-time First Name Validation
+  const validateFirstName = (value) => {
+    if (!value.trim()) {
+      return { valid: false, message: 'First name is required' };
+    }
+    if (value.length < 2) {
+      return { valid: false, message: 'First name must be at least 2 characters' };
+    }
+    if (value.length > 30) {
+      return { valid: false, message: 'First name cannot exceed 30 characters' };
+    }
+    if (!/^[a-zA-Z\s]*$/.test(value)) {
+      return { valid: false, message: 'First name can only contain letters' };
+    }
+    return { valid: true, message: '' };
+  };
+
+  // Real-time Last Name Validation
+  const validateLastName = (value) => {
+    if (!value.trim()) {
+      return { valid: false, message: 'Last name is required' };
+    }
+    if (value.length < 2) {
+      return { valid: false, message: 'Last name must be at least 2 characters' };
+    }
+    if (value.length > 30) {
+      return { valid: false, message: 'Last name cannot exceed 30 characters' };
+    }
+    if (!/^[a-zA-Z\s]*$/.test(value)) {
+      return { valid: false, message: 'Last name can only contain letters' };
+    }
+    return { valid: true, message: '' };
+  };
+
+  // Real-time Email Validation
+  const validateEmail = (value) => {
+    if (!value.trim()) {
+      return { valid: false, message: 'Email is required' };
+    }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(value)) {
+      return { valid: false, message: 'Please enter a valid email' };
+    }
+    return { valid: true, message: '' };
+  };
+
+  // Real-time Password Validation
+  const validatePassword = (value) => {
+    if (!value) {
+      return { valid: false, message: 'Password is required' };
+    }
+    if (value.length < 6) {
+      return { valid: false, message: 'Password must be at least 6 characters' };
+    }
+    if (!/(?=.*[a-z])/.test(value)) {
+      return { valid: false, message: 'Password must contain at least one lowercase letter' };
+    }
+    if (!/(?=.*[A-Z])/.test(value)) {
+      return { valid: false, message: 'Password must contain at least one uppercase letter' };
+    }
+    if (!/(?=.*\d)/.test(value)) {
+      return { valid: false, message: 'Password must contain at least one number' };
+    }
+    return { valid: true, message: '' };
+  };
+
+  // Real-time Confirm Password Validation
+  const validateConfirmPassword = (value, password) => {
+    if (!value) {
+      return { valid: false, message: 'Please confirm your password' };
+    }
+    if (value !== password) {
+      return { valid: false, message: 'Passwords do not match' };
+    }
+    return { valid: true, message: '' };
+  };
+
+  // Check email exists in database (debounced)
+  useEffect(() => {
+    if (formData.email && validation.email.valid) {
+      // Clear previous timeout
+      if (emailCheckTimeout) {
+        clearTimeout(emailCheckTimeout);
+      }
+
+      // Set checking state
+      setValidation(prev => ({
+        ...prev,
+        email: { ...prev.email, checking: true }
+      }));
+
+      // Set new timeout for API call
+      const timeout = setTimeout(async () => {
+        try {
+          const exists = await checkEmailExists(formData.email);
+          if (exists) {
+            setValidation(prev => ({
+              ...prev,
+              email: { valid: false, message: 'This email is already registered', checking: false }
+            }));
+          } else {
+            setValidation(prev => ({
+              ...prev,
+              email: { valid: true, message: '✓ Email is available', checking: false }
+            }));
+          }
+        } catch (err) {
+          setValidation(prev => ({
+            ...prev,
+            email: { ...prev.email, checking: false }
+          }));
+        }
+      }, 800);
+
+      setEmailCheckTimeout(timeout);
+    }
+
+    return () => {
+      if (emailCheckTimeout) {
+        clearTimeout(emailCheckTimeout);
+      }
+    };
+  }, [formData.email]);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
+    const newValue = type === 'checkbox' ? checked : value;
+
     setFormData(prevState => ({
       ...prevState,
-      [name]: type === 'checkbox' ? checked : value
+      [name]: newValue
     }));
-    // Clear error when user starts typing
+
+    // Real-time validation
+    if (name === 'firstName') {
+      setValidation(prev => ({ ...prev, firstName: validateFirstName(value) }));
+    } else if (name === 'lastName') {
+      setValidation(prev => ({ ...prev, lastName: validateLastName(value) }));
+    } else if (name === 'phoneNumber') {
+      const phoneValidation = validatePhoneNumber(value, formData.countryCode);
+      setValidation(prev => ({ ...prev, phoneNumber: phoneValidation }));
+    } else if (name === 'email') {
+      const emailValidation = validateEmail(value);
+      setValidation(prev => ({ ...prev, email: emailValidation }));
+    } else if (name === 'password') {
+      setValidation(prev => ({ 
+        ...prev, 
+        password: validatePassword(value),
+        confirmPassword: formData.confirmPassword ? validateConfirmPassword(formData.confirmPassword, value) : prev.confirmPassword
+      }));
+    } else if (name === 'confirmPassword') {
+      setValidation(prev => ({ ...prev, confirmPassword: validateConfirmPassword(value, formData.password) }));
+    } else if (name === 'countryCode') {
+      if (formData.phoneNumber) {
+        const phoneValidation = validatePhoneNumber(formData.phoneNumber, value);
+        setValidation(prev => ({ ...prev, phoneNumber: phoneValidation }));
+      }
+    }
+
     if (error) setError('');
   };
 
@@ -30,6 +197,30 @@ const SignUp = () => {
     e.preventDefault();
     setError('');
     setSuccess('');
+
+    // Validate all fields
+    const firstNameValidation = validateFirstName(formData.firstName);
+    const lastNameValidation = validateLastName(formData.lastName);
+    const phoneValidation = validatePhoneNumber(formData.phoneNumber, formData.countryCode);
+    const emailValidation = validateEmail(formData.email);
+    const passwordValidation = validatePassword(formData.password);
+    const confirmPasswordValidation = validateConfirmPassword(formData.confirmPassword, formData.password);
+
+    setValidation({
+      firstName: firstNameValidation,
+      lastName: lastNameValidation,
+      phoneNumber: phoneValidation,
+      email: emailValidation,
+      password: passwordValidation,
+      confirmPassword: confirmPasswordValidation
+    });
+
+    // Check if any validation failed
+    if (!firstNameValidation.valid || !lastNameValidation.valid || !phoneValidation.valid || 
+        !emailValidation.valid || !passwordValidation.valid || !confirmPasswordValidation.valid) {
+      setError('Please fix all validation errors before submitting');
+      return;
+    }
 
     if (!formData.agreeToTerms) {
       setError('Please agree to the terms & policy');
@@ -39,16 +230,29 @@ const SignUp = () => {
     setLoading(true);
 
     try {
+      // Check email one more time before registration
+      const emailExists = await checkEmailExists(formData.email);
+      if (emailExists) {
+        setError('This email is already registered');
+        setValidation(prev => ({
+          ...prev,
+          email: { valid: false, message: 'This email is already registered', checking: false }
+        }));
+        setLoading(false);
+        return;
+      }
+
       const response = await registerStudent({
-        name: formData.name,
+        firstName: formData.firstName,
+        lastName: formData.lastName,
         email: formData.email,
-        phoneNumber: formData.phoneNumber,
+        phoneNumber: formData.phoneNumber.replace(/\D/g, ''),
+        countryCode: formData.countryCode,
         password: formData.password
       });
 
       setSuccess('Registration successful! Redirecting...');
       
-      // Redirect after 2 seconds
       setTimeout(() => {
         navigate('/');
       }, 2000);
@@ -62,13 +266,13 @@ const SignUp = () => {
 
   const handleGoogleSignIn = () => {
     console.log('Sign in with Google');
-    // Add Google OAuth logic here
   };
 
   const handleAppleSignIn = () => {
     console.log('Sign in with Apple');
-    // Add Apple OAuth logic here
   };
+
+  const selectedCountry = countries.find(c => c.code === formData.countryCode);
 
   return (
     <div className="signup-page">
@@ -80,30 +284,74 @@ const SignUp = () => {
           {success && <div className="alert alert-success">{success}</div>}
           
           <form onSubmit={handleSubmit} className="signup-form">
-            <div className="form-group">
-              <label htmlFor="name">Name</label>
-              <input
-                type="text"
-                id="name"
-                name="name"
-                placeholder="Enter your name"
-                value={formData.name}
-                onChange={handleChange}
-                required
-              />
+            <div className="form-row">
+              <div className="form-group">
+                <label htmlFor="firstName">First Name</label>
+                <input
+                  type="text"
+                  id="firstName"
+                  name="firstName"
+                  placeholder="Enter your first name"
+                  value={formData.firstName}
+                  onChange={handleChange}
+                  className={!validation.firstName.valid ? 'input-error' : ''}
+                  required
+                />
+                {!validation.firstName.valid && (
+                  <span className="error-message">{validation.firstName.message}</span>
+                )}
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="lastName">Last Name</label>
+                <input
+                  type="text"
+                  id="lastName"
+                  name="lastName"
+                  placeholder="Enter your last name"
+                  value={formData.lastName}
+                  onChange={handleChange}
+                  className={!validation.lastName.valid ? 'input-error' : ''}
+                  required
+                />
+                {!validation.lastName.valid && (
+                  <span className="error-message">{validation.lastName.message}</span>
+                )}
+              </div>
             </div>
 
             <div className="form-group">
               <label htmlFor="phoneNumber">Phone Number</label>
-              <input
-                type="tel"
-                id="phoneNumber"
-                name="phoneNumber"
-                placeholder="Enter your number"
-                value={formData.phoneNumber}
-                onChange={handleChange}
-                required
-              />
+              <div className="phone-input-group">
+                <select
+                  name="countryCode"
+                  value={formData.countryCode}
+                  onChange={handleChange}
+                  className="country-select"
+                >
+                  {countries.map(country => (
+                    <option key={country.code} value={country.code}>
+                      {country.flag} {country.name} ({country.dialCode})
+                    </option>
+                  ))}
+                </select>
+                <input
+                  type="tel"
+                  id="phoneNumber"
+                  name="phoneNumber"
+                  placeholder={selectedCountry?.format || "Enter phone number"}
+                  value={formData.phoneNumber}
+                  onChange={handleChange}
+                  className={!validation.phoneNumber.valid ? 'input-error' : ''}
+                  required
+                />
+              </div>
+              {!validation.phoneNumber.valid && (
+                <span className="error-message">{validation.phoneNumber.message}</span>
+              )}
+              {selectedCountry && (
+                <span className="input-hint">Format: {selectedCountry.format} ({selectedCountry.length} digits)</span>
+              )}
             </div>
 
             <div className="form-group">
@@ -115,8 +363,18 @@ const SignUp = () => {
                 placeholder="Enter your email"
                 value={formData.email}
                 onChange={handleChange}
+                className={!validation.email.valid ? 'input-error' : validation.email.message.includes('✓') ? 'input-success' : ''}
                 required
               />
+              {validation.email.checking && (
+                <span className="checking-message">Checking availability...</span>
+              )}
+              {!validation.email.checking && !validation.email.valid && (
+                <span className="error-message">{validation.email.message}</span>
+              )}
+              {!validation.email.checking && validation.email.valid && validation.email.message && (
+                <span className="success-message">{validation.email.message}</span>
+              )}
             </div>
 
             <div className="form-group">
@@ -128,8 +386,33 @@ const SignUp = () => {
                 placeholder="Enter your Password"
                 value={formData.password}
                 onChange={handleChange}
+                className={!validation.password.valid ? 'input-error' : ''}
                 required
               />
+              {!validation.password.valid && (
+                <span className="error-message">{validation.password.message}</span>
+              )}
+              <span className="input-hint">Must contain uppercase, lowercase, and number (min 6 characters)</span>
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="confirmPassword">Confirm Password</label>
+              <input
+                type="password"
+                id="confirmPassword"
+                name="confirmPassword"
+                placeholder="Confirm your Password"
+                value={formData.confirmPassword}
+                onChange={handleChange}
+                className={!validation.confirmPassword.valid ? 'input-error' : formData.confirmPassword && validation.confirmPassword.valid ? 'input-success' : ''}
+                required
+              />
+              {!validation.confirmPassword.valid && formData.confirmPassword && (
+                <span className="error-message">{validation.confirmPassword.message}</span>
+              )}
+              {validation.confirmPassword.valid && formData.confirmPassword && (
+                <span className="success-message">✓ Passwords match</span>
+              )}
             </div>
 
             <div className="form-group-checkbox">

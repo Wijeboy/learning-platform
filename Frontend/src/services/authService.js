@@ -97,6 +97,29 @@ export const isAuthenticated = () => {
   return !!localStorage.getItem('token');
 };
 
+// Check if email already exists
+export const checkEmailExists = async (email) => {
+  try {
+    const response = await fetch(`${API_URL}/auth/check-email`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || 'Failed to check email');
+    }
+
+    return data.exists;
+  } catch (error) {
+    throw error;
+  }
+};
+
 // Get stored user data
 export const getStoredUser = () => {
   const user = localStorage.getItem('user');

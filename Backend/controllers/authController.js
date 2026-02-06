@@ -13,10 +13,10 @@ const generateToken = (id) => {
 // @access  Public
 exports.register = async (req, res) => {
   try {
-    const { name, email, phoneNumber, password } = req.body;
+    const { firstName, lastName, email, phoneNumber, countryCode, password } = req.body;
 
     // Check if all fields are provided
-    if (!name || !email || !phoneNumber || !password) {
+    if (!firstName || !lastName || !email || !phoneNumber || !countryCode || !password) {
       return res.status(400).json({
         success: false,
         message: 'Please provide all required fields'
@@ -34,9 +34,11 @@ exports.register = async (req, res) => {
 
     // Create student
     const student = await Student.create({
-      name,
+      firstName,
+      lastName,
       email,
       phoneNumber,
+      countryCode,
       password
     });
 
@@ -49,9 +51,11 @@ exports.register = async (req, res) => {
       message: 'Student registered successfully',
       data: {
         id: student._id,
-        name: student.name,
+        firstName: student.firstName,
+        lastName: student.lastName,
         email: student.email,
         phoneNumber: student.phoneNumber,
+        countryCode: student.countryCode,
         role: student.role,
         token
       }
@@ -143,6 +147,35 @@ exports.getMe = async (req, res) => {
     res.status(500).json({
       success: false,
       message: 'Error fetching profile',
+      error: error.message
+    });
+  }
+};
+
+// @desc    Check if email exists
+// @route   POST /api/auth/check-email
+// @access  Public
+exports.checkEmail = async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    if (!email) {
+      return res.status(400).json({
+        success: false,
+        message: 'Please provide an email'
+      });
+    }
+
+    const existingStudent = await Student.findOne({ email });
+
+    res.status(200).json({
+      success: true,
+      exists: !!existingStudent
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Error checking email',
       error: error.message
     });
   }

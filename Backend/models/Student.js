@@ -3,12 +3,19 @@ const bcrypt = require('bcryptjs');
 const validator = require('validator');
 
 const studentSchema = new mongoose.Schema({
-  name: {
+  firstName: {
     type: String,
-    required: [true, 'Please provide your name'],
+    required: [true, 'Please provide your first name'],
     trim: true,
-    minlength: [2, 'Name must be at least 2 characters'],
-    maxlength: [50, 'Name cannot exceed 50 characters']
+    minlength: [2, 'First name must be at least 2 characters'],
+    maxlength: [30, 'First name cannot exceed 30 characters']
+  },
+  lastName: {
+    type: String,
+    required: [true, 'Please provide your last name'],
+    trim: true,
+    minlength: [2, 'Last name must be at least 2 characters'],
+    maxlength: [30, 'Last name cannot exceed 30 characters']
   },
   email: {
     type: String,
@@ -21,6 +28,11 @@ const studentSchema = new mongoose.Schema({
   phoneNumber: {
     type: String,
     required: [true, 'Please provide your phone number'],
+    trim: true
+  },
+  countryCode: {
+    type: String,
+    required: [true, 'Please provide your country code'],
     trim: true
   },
   password: {
