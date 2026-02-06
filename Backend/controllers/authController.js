@@ -1,4 +1,6 @@
 const Student = require('../models/Student');
+const Admin = require('../models/Admin');
+const Instructor = require('../models/Instructor');
 const jwt = require('jsonwebtoken');
 
 // Generate JWT Token
@@ -71,7 +73,7 @@ exports.register = async (req, res) => {
   }
 };
 
-// @desc    Login student
+// @desc    Login student, instructor, or admin
 // @route   POST /api/auth/login
 // @access  Public
 exports.login = async (req, res) => {
@@ -86,11 +88,34 @@ exports.login = async (req, res) => {
       });
     }
 
-    // Find student and include password
-    const student = await Student.findOne({ email }).select('+password');
+    // Try to find user in all collections
+    let user = null;
+    let userType = null;
 
-    // Check if student exists and password is correct
-    if (!student || !(await student.comparePassword(password))) {
+    // Check Admin first
+    user = await Admin.findOne({ email }).select('+password');
+    if (user) {
+      userType = 'admin';
+    }
+
+    // Check Instructor if not admin
+    if (!user) {
+      user = await Instructor.findOne({ email }).select('+password');
+      if (user) {
+        userType = 'instructor';
+      }
+    }
+
+    // Check Student if not admin or instructor
+    if (!user) {
+      user = await Student.findOne({ email }).select('+password');
+      if (user) {
+        userType = 'student';
+      }
+    }
+
+    // Check if user exists and password is correct
+    if (!user || !(await user.comparePassword(password))) {
       return res.status(401).json({
         success: false,
         message: 'Invalid email or password'
@@ -98,7 +123,7 @@ exports.login = async (req, res) => {
     }
 
     // Check if account is active
-    if (!student.isActive) {
+    if (!user.isActive) {
       return res.status(401).json({
         success: false,
         message: 'Your account has been deactivated'
@@ -106,18 +131,20 @@ exports.login = async (req, res) => {
     }
 
     // Generate token
-    const token = generateToken(student._id);
+    const token = generateToken(user._id);
 
-    // Send response
+    // Send response with user type
     res.status(200).json({
       success: true,
       message: 'Login successful',
       data: {
-        id: student._id,
-        name: student.name,
-        email: student.email,
-        phoneNumber: student.phoneNumber,
-        role: student.role,
+        id: user._id,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        phoneNumber: user.phoneNumber,
+        role: user.role,
+        userType: userType,
         token
       }
     });
