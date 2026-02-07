@@ -43,9 +43,13 @@ const Login = () => {
       // Set user in auth context
       login(response.data);
 
-      // Redirect to home or dashboard after successful login
+      // Redirect based on user type
       setTimeout(() => {
-        navigate('/');
+        if (response.data.userType === 'admin') {
+          navigate('/admin/dashboard');
+        } else {
+          navigate('/');
+        }
       }, 1000);
 
     } catch (err) {
