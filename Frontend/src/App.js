@@ -7,6 +7,7 @@ import AdminLayout from './components/AdminLayout';
 import SignUp from './pages/SignUp';
 import Login from './pages/Login';
 
+import ContactPage from './pages/ContactPage';
 import InstructorDetails from './pages/InstructorDetails';
 
 import AdminDashboard from './pages/admin/AdminDashboard';
@@ -32,6 +33,7 @@ function App() {
               <Route path="/login" element={<Login />} />
               <Route path="/signup" element={<SignUp />} />
               <Route path="/InstructorDetails" element={<InstructorDetails />} />
+               <Route path="/ContactPage" element={<ContactPage />} />
               {/* Add more routes as needed */}
             </Routes>
           </main>
