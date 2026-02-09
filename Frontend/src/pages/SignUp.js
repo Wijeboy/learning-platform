@@ -243,12 +243,13 @@ const SignUp = () => {
         return;
       }
 
+      const selectedCountry = countries.find(c => c.code === formData.countryCode);
       const response = await registerStudent({
         firstName: formData.firstName,
         lastName: formData.lastName,
         email: formData.email,
         phoneNumber: formData.phoneNumber.replace(/\D/g, ''),
-        countryCode: formData.countryCode,
+        countryCode: selectedCountry?.dialCode || '+94',
         password: formData.password,
         userType: formData.userType
       });

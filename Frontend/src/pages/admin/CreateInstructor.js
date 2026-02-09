@@ -13,7 +13,7 @@ const CreateInstructor = () => {
     firstName: '',
     lastName: '',
     email: '',
-    countryCode: '+1',
+    countryCode: 'AF',
     phoneNumber: '',
     password: '',
     confirmPassword: ''
@@ -83,8 +83,8 @@ const CreateInstructor = () => {
   useEffect(() => {
     if (touched.phoneNumber && formData.phoneNumber) {
       const phoneValidation = validatePhoneNumber(formData.phoneNumber, formData.countryCode);
-      if (!phoneValidation.isValid) {
-        setErrors(prev => ({ ...prev, phoneNumber: phoneValidation.error }));
+      if (!phoneValidation.valid) {
+        setErrors(prev => ({ ...prev, phoneNumber: phoneValidation.message }));
       } else {
         setErrors(prev => ({ ...prev, phoneNumber: '' }));
       }
@@ -120,6 +120,13 @@ const CreateInstructor = () => {
       }
     }
   }, [formData.password, formData.confirmPassword, touched.confirmPassword]);
+
+  // Check authentication and redirect if needed
+  useEffect(() => {
+    if (!isAuth || user?.userType !== 'admin') {
+      navigate('/login');
+    }
+  }, [isAuth, user, navigate]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -158,7 +165,12 @@ const CreateInstructor = () => {
 
     setLoading(true);
     try {
-      await createInstructor(formData);
+      const selectedCountry = countries.find(c => c.code === formData.countryCode);
+      const instructorData = {
+        ...formData,
+        countryCode: selectedCountry?.dialCode || '+93'
+      };
+      await createInstructor(instructorData);
       alert('Instructor created successfully!');
       navigate('/admin/manage-instructors');
     } catch (error) {
@@ -174,7 +186,6 @@ const CreateInstructor = () => {
   };
 
   if (!isAuth || user?.userType !== 'admin') {
-    navigate('/login');
     return null;
   }
 

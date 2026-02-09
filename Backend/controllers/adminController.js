@@ -136,7 +136,11 @@ exports.createInstructor = async (req, res) => {
       email,
       phoneNumber,
       countryCode,
-      password
+      password,
+      approvalStatus: 'approved',
+      isActive: true,
+      approvedBy: req.user._id,
+      approvedAt: new Date()
     });
 
     res.status(201).json({

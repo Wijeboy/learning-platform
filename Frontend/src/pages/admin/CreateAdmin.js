@@ -107,6 +107,13 @@ const CreateAdmin = () => {
     }
   }, [formData.password, formData.confirmPassword, touched.confirmPassword]);
 
+  // Check authentication and redirect if needed
+  useEffect(() => {
+    if (!isAuth || user?.userType !== 'admin') {
+      navigate('/login');
+    }
+  }, [isAuth, user, navigate]);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
@@ -118,16 +125,7 @@ const CreateAdmin = () => {
     setTouched({ ...touched, [name]: true });
   };
 
-  const validateForm = () => {
-    // Mark all fields as touched
-    setTouched({
-      firstName: true,
-      lastName: true,
-      email: true,
-      password: true,
-      confirmPassword: true
-    });
-
+  const isFormValid = () => {
     const hasErrors = Object.values(errors).some(error => error !== '');
     const hasEmptyFields = !formData.firstName || !formData.lastName || !formData.email || 
                           !formData.password || !formData.confirmPassword;
@@ -137,7 +135,16 @@ const CreateAdmin = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!validateForm()) {
+    // Mark all fields as touched on submit
+    setTouched({
+      firstName: true,
+      lastName: true,
+      email: true,
+      password: true,
+      confirmPassword: true
+    });
+
+    if (!isFormValid()) {
       return;
     }
 
@@ -159,7 +166,6 @@ const CreateAdmin = () => {
   };
 
   if (!isAuth || user?.userType !== 'admin') {
-    navigate('/login');
     return null;
   }
 
@@ -268,7 +274,7 @@ const CreateAdmin = () => {
             </div>
           </div>
 
-          <button type="submit" className="btn-submit" disabled={loading || !validateForm() || emailChecking}>
+          <button type="submit" className="btn-submit" disabled={loading || !isFormValid() || emailChecking}>
             {loading ? 'Creating...' : 'Create Admin'}
           </button>
         </form>
