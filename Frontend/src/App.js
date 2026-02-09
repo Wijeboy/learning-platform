@@ -1,65 +1,67 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import Navbar from './components/Navbar';
-import GuestNavbar from './components/GuestNavbar';
 import Footer from './components/Footer';
 import AdminLayout from './components/AdminLayout';
-import Home from './pages/Home';
 import SignUp from './pages/SignUp';
 import Login from './pages/Login';
 import AdminDashboard from './pages/admin/AdminDashboard';
-import AdminCourses from './pages/admin/AdminCourses';
-import AdminUsers from './pages/admin/AdminUsers';
-import AdminInstructors from './pages/admin/AdminInstructors';
-import AdminReports from './pages/admin/AdminReports';
-import AdminSettings from './pages/admin/AdminSettings';
+import ManageStudents from './pages/admin/ManageStudents';
+import ManageInstructors from './pages/admin/ManageInstructors';
+import ManageAdmins from './pages/admin/ManageAdmins';
+import CreateAdmin from './pages/admin/CreateAdmin';
+import CreateInstructor from './pages/admin/CreateInstructor';
 import AdminProfile from './pages/admin/AdminProfile';
+import PendingInstructors from './pages/admin/PendingInstructors';
 import './App.css';
 
 function App() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-
-  useEffect(() => {
-    // Check authentication status
-    const checkAuth = () => {
-      const token = localStorage.getItem('authToken');
-      setIsAuthenticated(!!token);
-    };
-    checkAuth();
-
-    // Listen for auth changes
-    window.addEventListener('storage', checkAuth);
-    return () => window.removeEventListener('storage', checkAuth);
-  }, []);
-
   return (
     <Router>
       <AuthProvider>
-        <div className="App">
-          {isAuthenticated ? <Navbar /> : <GuestNavbar />}
-          <main style={{ flex: 1 }}>
-            <Routes>
-              {/* Public Routes */}
-              <Route path="/" element={<Home />} />
-              <Route path="/signup" element={<SignUp />} />
-              <Route path="/login" element={<Login />} />
-
-              {/* Admin Routes */}
-              <Route path="/admin" element={<AdminLayout />}>
-                <Route index element={<AdminDashboard />} />
-                <Route path="dashboard" element={<AdminDashboard />} />
-                <Route path="courses" element={<AdminCourses />} />
-                <Route path="users" element={<AdminUsers />} />
-                <Route path="instructors" element={<AdminInstructors />} />
-                <Route path="reports" element={<AdminReports />} />
-                <Route path="settings" element={<AdminSettings />} />
-                <Route path="profile" element={<AdminProfile />} />
-              </Route>
-            </Routes>
-          </main>
-          <Footer />
-        </div>
+        <Routes>
+          {/* Public Routes with Navbar and Footer */}
+          <Route path="/" element={
+            <div className="App">
+              <Navbar />
+              <main style={{ flex: 1 }}>
+                <Login />
+              </main>
+              <Footer />
+            </div>
+          } />
+          <Route path="/login" element={
+            <div className="App">
+              <Navbar />
+              <main style={{ flex: 1 }}>
+                <Login />
+              </main>
+              <Footer />
+            </div>
+          } />
+          <Route path="/signup" element={
+            <div className="App">
+              <Navbar />
+              <main style={{ flex: 1 }}>
+                <SignUp />
+              </main>
+              <Footer />
+            </div>
+          } />
+          
+          {/* Admin Routes with Sidebar Layout */}
+          <Route path="/admin" element={<AdminLayout />}>
+            <Route path="dashboard" element={<AdminDashboard />} />
+            <Route path="profile" element={<AdminProfile />} />
+            <Route path="manage-students" element={<ManageStudents />} />
+            <Route path="manage-instructors" element={<ManageInstructors />} />
+            <Route path="manage-admins" element={<ManageAdmins />} />
+            <Route path="pending-instructors" element={<PendingInstructors />} />
+            <Route path="create-admin" element={<CreateAdmin />} />
+            <Route path="create-instructor" element={<CreateInstructor />} />
+          </Route>
+        </Routes>
       </AuthProvider>
     </Router>
   );

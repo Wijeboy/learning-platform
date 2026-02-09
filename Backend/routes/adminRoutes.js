@@ -8,7 +8,11 @@ const {
   deleteUser,
   toggleUserStatus,
   updateAdminProfile,
-  uploadProfilePhoto
+  uploadProfilePhoto,
+  checkEmailExists,
+  getPendingInstructors,
+  approveInstructor,
+  declineInstructor
 } = require('../controllers/adminController');
 const { adminProtect } = require('../middleware/adminMiddleware');
 
@@ -18,6 +22,14 @@ router.use(adminProtect);
 // Admin profile routes
 router.put('/profile', updateAdminProfile);
 router.post('/profile-photo', uploadProfilePhoto);
+
+// Check email existence
+router.get('/check-email/:email', checkEmailExists);
+
+// Instructor approval routes
+router.get('/pending-instructors', getPendingInstructors);
+router.put('/approve-instructor/:id', approveInstructor);
+router.put('/decline-instructor/:id', declineInstructor);
 
 // Get all users
 router.get('/users', getAllUsers);

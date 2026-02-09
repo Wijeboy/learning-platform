@@ -52,7 +52,19 @@ const instructorSchema = new mongoose.Schema({
   }],
   isActive: {
     type: Boolean,
-    default: true
+    default: false // Changed to false - instructors need admin approval
+  },
+  approvalStatus: {
+    type: String,
+    enum: ['pending', 'approved', 'declined'],
+    default: 'pending'
+  },
+  approvedBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Admin'
+  },
+  approvedAt: {
+    type: Date
   },
   createdAt: {
     type: Date,

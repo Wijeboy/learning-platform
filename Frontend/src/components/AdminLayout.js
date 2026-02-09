@@ -1,7 +1,7 @@
 import React from 'react';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { FiHome, FiUsers, FiUserCheck, FiShield, FiUserPlus, FiLogOut } from 'react-icons/fi';
+import { FiHome, FiUsers, FiUserCheck, FiShield, FiUserPlus, FiLogOut, FiClock } from 'react-icons/fi';
 import './AdminLayout.css';
 
 const AdminLayout = () => {
@@ -17,6 +17,7 @@ const AdminLayout = () => {
   const menuItems = [
     { path: '/admin/dashboard', icon: <FiHome />, label: 'Dashboard' },
     { path: '/admin/profile', icon: <FiShield />, label: 'My Profile' },
+    { path: '/admin/pending-instructors', icon: <FiClock />, label: 'Pending Instructors' },
     { path: '/admin/manage-students', icon: <FiUsers />, label: 'Students' },
     { path: '/admin/manage-instructors', icon: <FiUserCheck />, label: 'Instructors' },
     { path: '/admin/manage-admins', icon: <FiShield />, label: 'Admins' },

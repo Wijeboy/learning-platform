@@ -10,12 +10,12 @@ const generateToken = (id) => {
   });
 };
 
-// @desc    Register a new student
+// @desc    Register a new student or instructor
 // @route   POST /api/auth/register
 // @access  Public
 exports.register = async (req, res) => {
   try {
-    const { firstName, lastName, email, phoneNumber, countryCode, password } = req.body;
+    const { firstName, lastName, email, phoneNumber, countryCode, password, userType } = req.body;
 
     // Check if all fields are provided
     if (!firstName || !lastName || !email || !phoneNumber || !countryCode || !password) {
@@ -25,49 +25,79 @@ exports.register = async (req, res) => {
       });
     }
 
-    // Check if student already exists
+    // Check if email already exists in any collection
     const existingStudent = await Student.findOne({ email });
-    if (existingStudent) {
+    const existingInstructor = await Instructor.findOne({ email });
+    const existingAdmin = await Admin.findOne({ email });
+    
+    if (existingStudent || existingInstructor || existingAdmin) {
       return res.status(400).json({
         success: false,
         message: 'Email already registered'
       });
     }
 
-    // Create student
-    const student = await Student.create({
-      firstName,
-      lastName,
-      email,
-      phoneNumber,
-      countryCode,
-      password
-    });
+    // If registering as instructor
+    if (userType === 'instructor') {
+      const instructor = await Instructor.create({
+        firstName,
+        lastName,
+        email,
+        phoneNumber,
+        countryCode,
+        password,
+        isActive: false,
+        approvalStatus: 'pending'
+      });
 
-    // Generate token
-    const token = generateToken(student._id);
+      res.status(201).json({
+        success: true,
+        message: 'Instructor application submitted successfully. Please wait for admin approval.',
+        data: {
+          id: instructor._id,
+          firstName: instructor.firstName,
+          lastName: instructor.lastName,
+          email: instructor.email,
+          role: instructor.role,
+          approvalStatus: instructor.approvalStatus
+        }
+      });
+    } else {
+      // Create student (default)
+      const student = await Student.create({
+        firstName,
+        lastName,
+        email,
+        phoneNumber,
+        countryCode,
+        password
+      });
 
-    // Send response
-    res.status(201).json({
-      success: true,
-      message: 'Student registered successfully',
-      data: {
-        id: student._id,
-        firstName: student.firstName,
-        lastName: student.lastName,
-        email: student.email,
-        phoneNumber: student.phoneNumber,
-        countryCode: student.countryCode,
-        role: student.role,
-        token
-      }
-    });
+      // Generate token
+      const token = generateToken(student._id);
+
+      // Send response
+      res.status(201).json({
+        success: true,
+        message: 'Student registered successfully',
+        data: {
+          id: student._id,
+          firstName: student.firstName,
+          lastName: student.lastName,
+          email: student.email,
+          phoneNumber: student.phoneNumber,
+          countryCode: student.countryCode,
+          role: student.role,
+          token
+        }
+      });
+    }
 
   } catch (error) {
     console.error('Registration Error:', error);
     res.status(500).json({
       success: false,
-      message: 'Error registering student',
+      message: 'Error during registration',
       error: error.message
     });
   }
@@ -122,12 +152,40 @@ exports.login = async (req, res) => {
       });
     }
 
-    // Check if account is active
-    if (!user.isActive) {
-      return res.status(401).json({
-        success: false,
-        message: 'Your account has been deactivated'
-      });
+    // Check instructor approval status BEFORE isActive check
+    if (userType === 'instructor') {
+      console.log('Instructor login attempt - approvalStatus:', user.approvalStatus, 'isActive:', user.isActive);
+      
+      // If approvalStatus doesn't exist (old records), treat as pending
+      if (!user.approvalStatus || user.approvalStatus === 'pending') {
+        return res.status(403).json({
+          success: false,
+          message: 'Your instructor application is pending admin approval'
+        });
+      }
+      
+      if (user.approvalStatus === 'declined') {
+        return res.status(403).json({
+          success: false,
+          message: 'Your instructor application has been declined'
+        });
+      }
+
+      // Check if account is active for instructors
+      if (!user.isActive) {
+        return res.status(403).json({
+          success: false,
+          message: 'Your account has been deactivated by admin'
+        });
+      }
+    } else {
+      // Check if account is active for students and admins
+      if (!user.isActive) {
+        return res.status(401).json({
+          success: false,
+          message: 'Your account has been deactivated'
+        });
+      }
     }
 
     // Generate token
