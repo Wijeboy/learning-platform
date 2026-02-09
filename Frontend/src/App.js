@@ -4,6 +4,7 @@ import { AuthProvider } from './context/AuthContext';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import AdminLayout from './components/AdminLayout';
+import InstructorLayout from './components/InstructorLayout';
 import SignUp from './pages/SignUp';
 import Login from './pages/Login';
 import Home from './pages/Home';
@@ -16,7 +17,13 @@ import CreateInstructor from './pages/admin/CreateInstructor';
 import AdminProfile from './pages/admin/AdminProfile';
 import PendingInstructors from './pages/admin/PendingInstructors';
 import StudentDashboard from './pages/student/StudentDashboard';
+import StudentCourseView from './pages/student/StudentCourseView';
 import InstructorDashboard from './pages/instructor/InstructorDashboard';
+import MyCourses from './pages/instructor/MyCourses/MyCourses';
+import AddCourse from './pages/instructor/AddCourse/AddCourse';
+import EditCourse from './pages/instructor/EditCourse/EditCourse';
+import Courses from './pages/Courses/Courses';
+import CourseDetail from './pages/CourseDetail/CourseDetail';
 import './App.css';
 
 function App() {
@@ -84,17 +91,41 @@ function App() {
               <Footer />
             </div>
           } />
-
-          {/* Instructor Routes */}
-          <Route path="/instructor/dashboard" element={
+          <Route path="/student/courses/:id" element={
             <div className="App">
               <Navbar />
               <main style={{ flex: 1 }}>
-                <InstructorDashboard />
+                <StudentCourseView />
               </main>
               <Footer />
             </div>
           } />
+          <Route path="/courses" element={
+            <div className="App">
+              <Navbar />
+              <main style={{ flex: 1 }}>
+                <Courses />
+              </main>
+              <Footer />
+            </div>
+          } />
+          <Route path="/courses/:id" element={
+            <div className="App">
+              <Navbar />
+              <main style={{ flex: 1 }}>
+                <CourseDetail />
+              </main>
+              <Footer />
+            </div>
+          } />
+
+          {/* Instructor Routes with Custom Layout */}
+          <Route path="/instructor" element={<InstructorLayout />}>
+            <Route path="dashboard" element={<InstructorDashboard />} />
+            <Route path="courses" element={<MyCourses />} />
+            <Route path="courses/add" element={<AddCourse />} />
+            <Route path="courses/:id/edit" element={<EditCourse />} />
+          </Route>
         </Routes>
       </AuthProvider>
     </Router>
