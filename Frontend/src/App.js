@@ -6,6 +6,7 @@ import Footer from './components/Footer';
 import AdminLayout from './components/AdminLayout';
 import SignUp from './pages/SignUp';
 import Login from './pages/Login';
+import Home from './pages/Home';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import ManageStudents from './pages/admin/ManageStudents';
 import ManageInstructors from './pages/admin/ManageInstructors';
@@ -14,6 +15,8 @@ import CreateAdmin from './pages/admin/CreateAdmin';
 import CreateInstructor from './pages/admin/CreateInstructor';
 import AdminProfile from './pages/admin/AdminProfile';
 import PendingInstructors from './pages/admin/PendingInstructors';
+import StudentDashboard from './pages/student/StudentDashboard';
+import InstructorDashboard from './pages/instructor/InstructorDashboard';
 import './App.css';
 
 function App() {
@@ -26,7 +29,16 @@ function App() {
             <div className="App">
               <Navbar />
               <main style={{ flex: 1 }}>
-                <Login />
+                <Home />
+              </main>
+              <Footer />
+            </div>
+          } />
+          <Route path="/home" element={
+            <div className="App">
+              <Navbar />
+              <main style={{ flex: 1 }}>
+                <Home />
               </main>
               <Footer />
             </div>
@@ -61,6 +73,28 @@ function App() {
             <Route path="create-admin" element={<CreateAdmin />} />
             <Route path="create-instructor" element={<CreateInstructor />} />
           </Route>
+
+          {/* Student Routes */}
+          <Route path="/student/dashboard" element={
+            <div className="App">
+              <Navbar />
+              <main style={{ flex: 1 }}>
+                <StudentDashboard />
+              </main>
+              <Footer />
+            </div>
+          } />
+
+          {/* Instructor Routes */}
+          <Route path="/instructor/dashboard" element={
+            <div className="App">
+              <Navbar />
+              <main style={{ flex: 1 }}>
+                <InstructorDashboard />
+              </main>
+              <Footer />
+            </div>
+          } />
         </Routes>
       </AuthProvider>
     </Router>
