@@ -17,8 +17,8 @@ const Home = () => {
     students: 0
   });
 
+  // Redirect logged-in users to their dashboards
   useEffect(() => {
-    // Redirect logged-in users to their dashboards
     if (isAuth && user) {
       if (user.userType === 'admin') {
         navigate('/admin/dashboard');
@@ -27,10 +27,11 @@ const Home = () => {
       } else if (user.userType === 'instructor') {
         navigate('/instructor/dashboard');
       }
-      return;
     }
+  }, [isAuth, user, navigate]);
 
-    // Counter animation
+  // Counter animation
+  useEffect(() => {
     const animateCounters = () => {
       const duration = 2000;
       const steps = 60;
