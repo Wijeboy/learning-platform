@@ -16,6 +16,9 @@ import CreateAdmin from './pages/admin/CreateAdmin';
 import CreateInstructor from './pages/admin/CreateInstructor';
 import AdminProfile from './pages/admin/AdminProfile';
 import PendingInstructors from './pages/admin/PendingInstructors';
+import AddProduct from './pages/admin/AddProduct';
+import ManageProducts from './pages/admin/ManageProducts';
+import EditProduct from './pages/admin/EditProduct';
 import StudentDashboard from './pages/student/StudentDashboard';
 import StudentCourseView from './pages/student/StudentCourseView';
 import InstructorDashboard from './pages/instructor/InstructorDashboard';
@@ -24,6 +27,10 @@ import AddCourse from './pages/instructor/AddCourse/AddCourse';
 import EditCourse from './pages/instructor/EditCourse/EditCourse';
 import Courses from './pages/Courses/Courses';
 import CourseDetail from './pages/CourseDetail/CourseDetail';
+import Shop from './pages/Shop/Shop';
+import ShopDetail from './pages/ShopDetail/ShopDetail';
+import Cart from './pages/Cart/Cart';
+import Checkout from './pages/Checkout/Checkout';
 import './App.css';
 
 function App() {
@@ -41,6 +48,7 @@ function App() {
               <Footer />
             </div>
           } />
+          
           <Route path="/home" element={
             <div className="App">
               <Navbar />
@@ -50,6 +58,7 @@ function App() {
               <Footer />
             </div>
           } />
+          
           <Route path="/login" element={
             <div className="App">
               <Navbar />
@@ -59,11 +68,72 @@ function App() {
               <Footer />
             </div>
           } />
+          
           <Route path="/signup" element={
             <div className="App">
               <Navbar />
               <main style={{ flex: 1 }}>
                 <SignUp />
+              </main>
+              <Footer />
+            </div>
+          } />
+
+          <Route path="/courses" element={
+            <div className="App">
+              <Navbar />
+              <main style={{ flex: 1 }}>
+                <Courses />
+              </main>
+              <Footer />
+            </div>
+          } />
+          
+          <Route path="/courses/:id" element={
+            <div className="App">
+              <Navbar />
+              <main style={{ flex: 1 }}>
+                <CourseDetail />
+              </main>
+              <Footer />
+            </div>
+          } />
+
+          <Route path="/shop" element={
+            <div className="App">
+              <Navbar />
+              <main style={{ flex: 1 }}>
+                <Shop />
+              </main>
+              <Footer />
+            </div>
+          } />
+          
+          <Route path="/shop/:id" element={
+            <div className="App">
+              <Navbar />
+              <main style={{ flex: 1 }}>
+                <ShopDetail />
+              </main>
+              <Footer />
+            </div>
+          } />
+
+          <Route path="/cart" element={
+            <div className="App">
+              <Navbar />
+              <main style={{ flex: 1 }}>
+                <Cart />
+              </main>
+              <Footer />
+            </div>
+          } />
+          
+          <Route path="/checkout" element={
+            <div className="App">
+              <Navbar />
+              <main style={{ flex: 1 }}>
+                <Checkout />
               </main>
               <Footer />
             </div>
@@ -79,6 +149,9 @@ function App() {
             <Route path="pending-instructors" element={<PendingInstructors />} />
             <Route path="create-admin" element={<CreateAdmin />} />
             <Route path="create-instructor" element={<CreateInstructor />} />
+            <Route path="add-product" element={<AddProduct />} />
+            <Route path="manage-products" element={<ManageProducts />} />
+            <Route path="edit-product/:id" element={<EditProduct />} />
           </Route>
 
           {/* Student Routes */}
@@ -91,29 +164,12 @@ function App() {
               <Footer />
             </div>
           } />
+          
           <Route path="/student/courses/:id" element={
             <div className="App">
               <Navbar />
               <main style={{ flex: 1 }}>
                 <StudentCourseView />
-              </main>
-              <Footer />
-            </div>
-          } />
-          <Route path="/courses" element={
-            <div className="App">
-              <Navbar />
-              <main style={{ flex: 1 }}>
-                <Courses />
-              </main>
-              <Footer />
-            </div>
-          } />
-          <Route path="/courses/:id" element={
-            <div className="App">
-              <Navbar />
-              <main style={{ flex: 1 }}>
-                <CourseDetail />
               </main>
               <Footer />
             </div>
