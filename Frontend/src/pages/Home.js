@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 import { FaUser, FaBook, FaCertificate, FaGraduationCap, FaCalendar, FaUserCircle, FaUserGraduate, FaChalkboardTeacher } from 'react-icons/fa';
 import { IoBookSharp, IoTime, IoStatsChart } from 'react-icons/io5';
 import { MdSchool, MdLightbulb, MdComputer } from 'react-icons/md';
 import './Home.css';
 
 const Home = () => {
-  // Check if user is logged in (you'll integrate this with your auth system)
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const navigate = useNavigate();
+  const { user, isAuth } = useAuth();
   
   // Counter animation state
   const [counters, setCounters] = useState({
@@ -17,12 +18,17 @@ const Home = () => {
   });
 
   useEffect(() => {
-    // Check authentication status from localStorage or your auth service
-    const checkAuth = () => {
-      const token = localStorage.getItem('authToken');
-      setIsAuthenticated(!!token);
-    };
-    checkAuth();
+    // Redirect logged-in users to their dashboards
+    if (isAuth && user) {
+      if (user.userType === 'admin') {
+        navigate('/admin/dashboard');
+      } else if (user.userType === 'student') {
+        navigate('/student/dashboard');
+      } else if (user.userType === 'instructor') {
+        navigate('/instructor/dashboard');
+      }
+      return;
+    }
 
     // Counter animation
     const animateCounters = () => {
@@ -367,7 +373,7 @@ const Home = () => {
       </section>
 
       {/* Join Section - Only for Guest Users */}
-      {!isAuthenticated && (
+      {!isAuth && (
         <section className="join-section">
           <h2 className="join-title">Ready to Join & Explore More?</h2>
           

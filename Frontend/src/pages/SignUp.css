@@ -104,6 +104,31 @@
   margin-top: 0.2rem;
 }
 
+.info-text {
+  color: #666;
+  font-size: 0.8rem;
+  margin-top: 0.3rem;
+  padding: 0.5rem;
+  background: rgba(103, 126, 234, 0.1);
+  border-radius: 6px;
+  border-left: 3px solid #667eea;
+}
+
+.form-select {
+  padding: 0.8rem;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  font-size: 0.95rem;
+  background-color: rgba(255, 255, 255, 0.6);
+  outline: none;
+  cursor: pointer;
+}
+
+.form-select:focus {
+  background-color: rgba(255, 255, 255, 0.9);
+  border-color: rgba(0, 0, 0, 0.3);
+}
+
 .input-hint {
   color: #666;
   font-size: 0.7rem;
