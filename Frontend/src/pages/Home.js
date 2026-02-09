@@ -86,7 +86,7 @@ const Home = () => {
       title: 'Advanced React Development',
       instructor: 'Jane Smith',
       price: 20,
-      category: 'Business',
+      category: 'Tech',
       lessons: '08',
       duration: '12h 30m',
       level: 'Expert',
@@ -97,7 +97,7 @@ const Home = () => {
       title: 'UI/UX Design Masterclass',
       instructor: 'Mike Johnson',
       price: 18,
-      category: 'Business',
+      category: 'Web',
       lessons: '06',
       duration: '10h 15m',
       level: 'Expert',
@@ -129,24 +129,24 @@ const Home = () => {
     {
       id: 2,
       title: 'Best Practices for Modern Web Development',
-      category: 'Marketing',
-      date: '20, July 2026',
+      category: 'Technology',
+      date: '02, March 2026',
       author: 'admin',
       image: '/blog2.png'
     },
     {
       id: 3,
       title: 'The Future of Online Learning Platforms',
-      category: 'Marketing',
-      date: '20, July 2026',
+      category: 'Web',
+      date: '10, June 2026',
       author: 'admin',
       image: '/blog3.png'
     },
     {
       id: 4,
       title: 'How to Build a Successful Career in Tech',
-      category: 'Marketing',
-      date: '20, July 2026',
+      category: 'Career',
+      date: '28, August 2026',
       author: 'admin',
       image: '/blog4.png'
     }
@@ -399,7 +399,7 @@ const Home = () => {
                 <p className="join-card-description">
                   Shape the future of learning through LearnX
                 </p>
-                <Link to="/instructor-apply" className="btn-join">
+                <Link to="/signup" className="btn-join">
                   Apply Now
                 </Link>
               </div>
