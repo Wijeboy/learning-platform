@@ -9,11 +9,6 @@ import Home from './pages/Home';
 import SignUp from './pages/SignUp';
 import Login from './pages/Login';
 import AdminDashboard from './pages/admin/AdminDashboard';
-import AdminCourses from './pages/admin/AdminCourses';
-import AdminUsers from './pages/admin/AdminUsers';
-import AdminInstructors from './pages/admin/AdminInstructors';
-import AdminReports from './pages/admin/AdminReports';
-import AdminSettings from './pages/admin/AdminSettings';
 import AdminProfile from './pages/admin/AdminProfile';
 import './App.css';
 
@@ -49,11 +44,6 @@ function App() {
               <Route path="/admin" element={<AdminLayout />}>
                 <Route index element={<AdminDashboard />} />
                 <Route path="dashboard" element={<AdminDashboard />} />
-                <Route path="courses" element={<AdminCourses />} />
-                <Route path="users" element={<AdminUsers />} />
-                <Route path="instructors" element={<AdminInstructors />} />
-                <Route path="reports" element={<AdminReports />} />
-                <Route path="settings" element={<AdminSettings />} />
                 <Route path="profile" element={<AdminProfile />} />
               </Route>
             </Routes>
