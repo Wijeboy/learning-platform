@@ -9,6 +9,7 @@ import Login from './pages/Login';
 
 import ContactPage from './pages/ContactPage';
 import InstructorDetails from './pages/InstructorDetails';
+import Shopdetails from './pages/Shopdetails';
 
 import AdminDashboard from './pages/admin/AdminDashboard';
 import ManageStudents from './pages/admin/ManageStudents';
@@ -34,6 +35,7 @@ function App() {
               <Route path="/signup" element={<SignUp />} />
               <Route path="/InstructorDetails" element={<InstructorDetails />} />
                <Route path="/ContactPage" element={<ContactPage />} />
+                <Route path="/Shopdetails" element={<Shopdetails />} />
               {/* Add more routes as needed */}
             </Routes>
           </main>
