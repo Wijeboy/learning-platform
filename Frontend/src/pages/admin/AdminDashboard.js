@@ -124,6 +124,12 @@ const AdminDashboard = () => {
             <h3>Manage Instructors</h3>
             <p>View and manage all instructors</p>
           </div>
+
+          <div className="action-card" onClick={() => navigate('/admin/manage-products')}>
+            <div className="action-icon view">📦</div>
+            <h3>Manage Products</h3>
+            <p>View and manage all shop products</p>
+          </div>
         </div>
       </div>
     </div>

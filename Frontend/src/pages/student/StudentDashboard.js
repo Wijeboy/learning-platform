@@ -2,13 +2,15 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { getMyEnrollments } from '../../services/enrollmentService';
-import { FiBook, FiClock, FiPlay, FiAward } from 'react-icons/fi';
+import { getMyPurchases } from '../../services/purchaseService';
+import { FiPlay, FiDownload } from 'react-icons/fi';
 import './StudentDashboard.css';
 
 const StudentDashboard = () => {
   const { user, isAuth } = useAuth();
   const navigate = useNavigate();
   const [enrollments, setEnrollments] = useState([]);
+  const [purchases, setPurchases] = useState([]);
   const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState({
     enrolled: 0,
@@ -21,31 +23,48 @@ const StudentDashboard = () => {
     if (!isAuth || user?.userType !== 'student') {
       navigate('/login');
     } else {
-      fetchEnrollments();
+      fetchData();
     }
   }, [isAuth, user, navigate]);
 
-  const fetchEnrollments = async () => {
+  const fetchData = async () => {
     try {
-      const data = await getMyEnrollments();
-      setEnrollments(data);
+      const enrollmentsData = await getMyEnrollments();
+      setEnrollments(enrollmentsData);
+      
+      const purchasesData = await getMyPurchases();
+      setPurchases(purchasesData.data);
       
       // Calculate stats
-      const completed = data.filter(e => e.completionPercentage === 100).length;
-      const inProgress = data.filter(e => e.completionPercentage > 0 && e.completionPercentage < 100).length;
-      const certificates = data.filter(e => e.certificateIssued).length;
+      const completed = enrollmentsData.filter(e => e.completionPercentage === 100).length;
+      const inProgress = enrollmentsData.filter(e => e.completionPercentage > 0 && e.completionPercentage < 100).length;
+      const certificates = enrollmentsData.filter(e => e.certificateIssued).length;
       
       setStats({
-        enrolled: data.length,
+        enrolled: enrollmentsData.length,
         completed,
         inProgress,
         certificates
       });
     } catch (error) {
-      console.error('Error fetching enrollments:', error);
+      console.error('Error fetching data:', error);
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleDownloadPdf = (pdfUrl) => {
+    if (!pdfUrl) {
+      alert('No PDF resource available for this product');
+      return;
+    }
+
+    const link = document.createElement('a');
+    link.href = `http://localhost:5001${pdfUrl}`;
+    link.download = pdfUrl.split('/').pop();
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
 
   if (!isAuth || user?.userType !== 'student') {
@@ -141,22 +160,39 @@ const StudentDashboard = () => {
           )}
         </div>
 
+        {/* My Resources Section */}
         <div className="content-section">
-          <h2>Recent Activity</h2>
-          {enrollments.length === 0 ? (
+          <h2>My Resources</h2>
+          {loading ? (
+            <div className="loading-state">Loading your resources...</div>
+          ) : purchases.length === 0 ? (
             <div className="empty-state">
-              <p>No recent activity to display.</p>
+              <p>You haven't purchased any resources yet.</p>
+              <button className="btn-browse" onClick={() => navigate('/shop')}>
+                Browse Shop
+              </button>
             </div>
           ) : (
-            <div className="activity-list">
-              {enrollments.slice(0, 5).map(enrollment => (
-                <div key={enrollment._id} className="activity-item">
-                  <div className="activity-icon">📖</div>
-                  <div className="activity-content">
-                    <p><strong>Enrolled in</strong> {enrollment.course.title}</p>
-                    <span className="activity-date">
-                      {new Date(enrollment.enrollmentDate).toLocaleDateString()}
-                    </span>
+            <div className="resources-grid">
+              {purchases.map(product => (
+                <div key={product._id} className="resource-card">
+                  <div className="resource-image">
+                    <img 
+                      src={`http://localhost:5001${product.image}`} 
+                      alt={product.title}
+                      onError={(e) => {
+                        e.target.src = '/placeholder-image.png';
+                      }}
+                    />
+                  </div>
+                  <div className="resource-info">
+                    <h3 className="resource-title">{product.title}</h3>
+                    <button 
+                      className="download-pdf-btn"
+                      onClick={() => handleDownloadPdf(product.pdfResource)}
+                    >
+                      <FiDownload /> Download PDF
+                    </button>
                   </div>
                 </div>
               ))}
