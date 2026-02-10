@@ -1,6 +1,6 @@
-import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { AuthProvider } from './context/AuthContext';
+import React, { useEffect, useContext } from 'react';
+import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
+import { AuthProvider, AuthContext } from './context/AuthContext';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import AdminLayout from './components/AdminLayout';
@@ -35,10 +35,55 @@ import Cart from './pages/Cart/Cart';
 import Checkout from './pages/Checkout/Checkout';
 import './App.css';
 
+// Inactivity timeout component
+function InactivityTimeout() {
+  const { user, logout } = useContext(AuthContext);
+  const navigate = useNavigate();
+  const INACTIVITY_TIMEOUT = 5 * 60 * 1000; // 5 minutes in milliseconds
+
+  useEffect(() => {
+    if (!user) return;
+
+    let timeoutId;
+
+    const resetTimer = () => {
+      if (timeoutId) clearTimeout(timeoutId);
+      
+      timeoutId = setTimeout(() => {
+        logout();
+        navigate('/login');
+        alert('You have been logged out due to inactivity.');
+      }, INACTIVITY_TIMEOUT);
+    };
+
+    // Events that indicate user activity
+    const events = ['mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart', 'click'];
+
+    // Add event listeners
+    events.forEach(event => {
+      document.addEventListener(event, resetTimer);
+    });
+
+    // Initialize timer
+    resetTimer();
+
+    // Cleanup
+    return () => {
+      if (timeoutId) clearTimeout(timeoutId);
+      events.forEach(event => {
+        document.removeEventListener(event, resetTimer);
+      });
+    };
+  }, [user, logout, navigate]);
+
+  return null;
+}
+
 function App() {
   return (
     <Router>
       <AuthProvider>
+        <InactivityTimeout />
         <Routes>
           {/* Public Routes with Navbar and Footer */}
           <Route path="/" element={

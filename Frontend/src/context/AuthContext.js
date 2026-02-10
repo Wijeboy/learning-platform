@@ -4,6 +4,8 @@ import { logout as logoutService, isAuthenticated, getStoredUser } from '../serv
 
 const AuthContext = createContext();
 
+export { AuthContext };
+
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {
@@ -18,7 +20,7 @@ export const AuthProvider = ({ children }) => {
   const [lastActivity, setLastActivity] = useState(Date.now());
   const navigate = useNavigate();
 
-  const INACTIVITY_TIMEOUT = 60000; // 1 minute in milliseconds
+  const INACTIVITY_TIMEOUT = 5 * 60 * 1000; // 5 minutes in milliseconds
 
   // Initialize auth state
   useEffect(() => {
