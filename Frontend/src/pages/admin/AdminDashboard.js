@@ -15,14 +15,13 @@ const AdminDashboard = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Wait for auth to initialize
-    if (user === null) return;
-    
-    if (isAuth && user?.userType === 'admin') {
-      fetchStats();
-    } else {
+    // Check if user is admin
+    if (!isAuth || user?.userType !== 'admin') {
       navigate('/login');
+      return;
     }
+
+    fetchStats();
   }, [isAuth, user, navigate]);
 
   const fetchStats = async () => {
@@ -130,6 +129,12 @@ const AdminDashboard = () => {
             <div className="action-icon view">📦</div>
             <h3>Manage Products</h3>
             <p>View and manage all shop products</p>
+          </div>
+
+          <div className="action-card" onClick={() => navigate('/admin/manage-events')}>
+            <div className="action-icon view">📅</div>
+            <h3>Manage Events</h3>
+            <p>View and manage all events</p>
           </div>
         </div>
       </div>
