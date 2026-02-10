@@ -12,11 +12,14 @@ const MyCourses = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!isAuth || user?.userType !== 'instructor') {
+    // Wait for auth to initialize
+    if (user === null) return;
+    
+    if (isAuth && user?.userType === 'instructor') {
+      fetchCourses();
+    } else {
       navigate('/login');
-      return;
     }
-    fetchCourses();
   }, [isAuth, user, navigate]);
 
   const fetchCourses = async () => {

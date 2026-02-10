@@ -109,6 +109,9 @@ const CreateAdmin = () => {
 
   // Check authentication and redirect if needed
   useEffect(() => {
+    // Wait for auth to initialize
+    if (user === null) return;
+    
     if (!isAuth || user?.userType !== 'admin') {
       navigate('/login');
     }
@@ -165,7 +168,11 @@ const CreateAdmin = () => {
     }
   };
 
-  if (!isAuth || user?.userType !== 'admin') {
+  if (user === null) {
+    return null;
+  }
+
+  if (isAuth && user?.userType !== 'admin') {
     return null;
   }
 

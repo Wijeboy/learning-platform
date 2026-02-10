@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../../context/AuthContext';
-import { updateAdminProfile, uploadProfilePhoto } from '../../services/adminService';
-import './AdminProfile.css';
+import { useAuth } from '../../../context/AuthContext';
+import { updateInstructorProfile, uploadInstructorProfilePhoto } from '../../../services/instructorService';
+import './InstructorProfile.css';
 
-const AdminProfile = () => {
+const InstructorProfile = () => {
   const { user, isAuth, login } = useAuth();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
@@ -13,6 +13,8 @@ const AdminProfile = () => {
     firstName: '',
     lastName: '',
     email: '',
+    phoneNumber: '',
+    countryCode: '',
     currentPassword: '',
     newPassword: '',
     confirmPassword: ''
@@ -27,20 +29,32 @@ const AdminProfile = () => {
         firstName: user.firstName || '',
         lastName: user.lastName || '',
         email: user.email || '',
+        phoneNumber: user.phoneNumber || '',
+        countryCode: user.countryCode || '+1',
         currentPassword: '',
         newPassword: '',
         confirmPassword: ''
       });
-      setPhotoPreview(user.profilePhoto || null);
+      
+      // Set profile photo preview
+      if (user.profilePhoto) {
+        setPhotoPreview(`http://localhost:5001${user.profilePhoto}`);
+      }
     }
   }, [user]);
 
-  if (user === null) {
-    return null;
-  }
+  // Redirect only after auth state is fully initialized
+  useEffect(() => {
+    // Wait for auth to initialize
+    if (user === null) return;
+    
+    if (!isAuth || user?.userType !== 'instructor') {
+      navigate('/login');
+    }
+  }, [isAuth, user, navigate]);
 
-  if (isAuth && user?.userType !== 'admin') {
-    navigate('/login');
+  // Show loading while auth is being checked
+  if (user === null) {
     return null;
   }
 
@@ -54,8 +68,6 @@ const AdminProfile = () => {
   const handlePhotoChange = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
-
-    console.log('File selected:', file);
 
     // Validate file type
     if (!file.type.startsWith('image/')) {
@@ -83,20 +95,25 @@ const AdminProfile = () => {
       const formData = new FormData();
       formData.append('photo', file);
       
-      console.log('Uploading photo...');
-      const response = await uploadProfilePhoto(formData);
-      console.log('Upload successful:', response);
+      const response = await uploadInstructorProfilePhoto(formData);
       
-      // Update user in context
-      const updatedUser = { ...user, profilePhoto: response.data.profilePhoto };
+      // Update user in context with photo
+      const updatedUser = { 
+        ...user, 
+        profilePhoto: response.profilePhoto 
+      };
+      
+      // Store updated user data
+      localStorage.setItem('user', JSON.stringify(updatedUser));
       login(updatedUser);
       
       setSuccessMessage('Profile photo updated successfully!');
+      setPhotoPreview(`http://localhost:5001${response.profilePhoto}`);
     } catch (error) {
       console.error('Error uploading photo:', error);
-      setErrors({ photo: error.response?.data?.message || error.message || 'Failed to upload photo' });
+      setErrors({ photo: error.message || 'Failed to upload photo' });
       // Reset preview on error
-      setPhotoPreview(user?.profilePhoto || null);
+      setPhotoPreview(user?.profilePhoto ? `http://localhost:5001${user.profilePhoto}` : null);
     } finally {
       setLoading(false);
     }
@@ -105,19 +122,36 @@ const AdminProfile = () => {
   const validateForm = () => {
     const newErrors = {};
 
+    // First name validation
     if (!formData.firstName.trim()) {
       newErrors.firstName = 'First name is required';
+    } else if (formData.firstName.trim().length < 2) {
+      newErrors.firstName = 'First name must be at least 2 characters';
+    } else if (!/^[a-zA-Z\s]+$/.test(formData.firstName)) {
+      newErrors.firstName = 'First name can only contain letters';
     }
 
+    // Last name validation
     if (!formData.lastName.trim()) {
       newErrors.lastName = 'Last name is required';
+    } else if (formData.lastName.trim().length < 2) {
+      newErrors.lastName = 'Last name must be at least 2 characters';
+    } else if (!/^[a-zA-Z\s]+$/.test(formData.lastName)) {
+      newErrors.lastName = 'Last name can only contain letters';
     }
 
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!formData.email) {
-      newErrors.email = 'Email is required';
-    } else if (!emailRegex.test(formData.email)) {
-      newErrors.email = 'Invalid email format';
+    // Country code validation
+    if (!formData.countryCode.trim()) {
+      newErrors.countryCode = 'Country code is required';
+    } else if (!/^\+\d{1,4}$/.test(formData.countryCode)) {
+      newErrors.countryCode = 'Invalid country code format (e.g., +1, +94)';
+    }
+
+    // Phone number validation
+    if (!formData.phoneNumber.trim()) {
+      newErrors.phoneNumber = 'Phone number is required';
+    } else if (!/^[0-9]{7,15}$/.test(formData.phoneNumber.replace(/[\s-]/g, ''))) {
+      newErrors.phoneNumber = 'Phone number must be 7-15 digits';
     }
 
     // Password validation only if user wants to change it
@@ -152,7 +186,8 @@ const AdminProfile = () => {
       const updateData = {
         firstName: formData.firstName,
         lastName: formData.lastName,
-        email: formData.email
+        phoneNumber: formData.phoneNumber,
+        countryCode: formData.countryCode
       };
 
       // Only include password fields if user wants to change password
@@ -161,10 +196,17 @@ const AdminProfile = () => {
         updateData.newPassword = formData.newPassword;
       }
 
-      const response = await updateAdminProfile(updateData);
+      const response = await updateInstructorProfile(updateData);
       
-      // Update user in context with the correct path
-      const updatedUser = response.data.admin;
+      // Update user in context with token preserved
+      const updatedUser = {
+        ...response.instructor,
+        token: user.token,
+        userType: user.userType
+      };
+      
+      // Store updated user data
+      localStorage.setItem('user', JSON.stringify(updatedUser));
       login(updatedUser);
       
       setSuccessMessage('Profile updated successfully!');
@@ -174,27 +216,26 @@ const AdminProfile = () => {
         ...formData,
         firstName: updatedUser.firstName,
         lastName: updatedUser.lastName,
+        phoneNumber: updatedUser.phoneNumber,
+        countryCode: updatedUser.countryCode,
         email: updatedUser.email,
         currentPassword: '',
         newPassword: '',
         confirmPassword: ''
       });
+      
+      // Scroll to top to show success message
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     } catch (error) {
       console.error('Error updating profile:', error);
-      if (error.response?.data?.message) {
-        setErrors({ submit: error.response.data.message });
-      } else if (error.message) {
-        setErrors({ submit: error.message });
-      } else {
-        setErrors({ submit: 'Failed to update profile. Please try again.' });
-      }
+      setErrors({ submit: error.message || 'Failed to update profile. Please try again.' });
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="admin-profile-page">
+    <div className="instructor-profile-page">
       <div className="profile-header">
         <h1>My Profile</h1>
         <p>Update your personal information and password</p>
@@ -267,16 +308,66 @@ const AdminProfile = () => {
             </div>
 
             <div className="form-group">
-              <label htmlFor="email">Email *</label>
+              <label htmlFor="email">Email * (Cannot be changed)</label>
               <input
                 type="email"
                 id="email"
                 name="email"
                 value={formData.email}
-                onChange={handleChange}
-                className={errors.email ? 'error' : ''}
+                disabled
+                className="disabled-input"
               />
-              {errors.email && <span className="error-message">{errors.email}</span>}
+              <p className="field-hint">Email is unique and cannot be changed</p>
+            </div>
+
+            <div className="form-row">
+              <div className="form-group">
+                <label htmlFor="countryCode">Country Code *</label>
+                <select
+                  id="countryCode"
+                  name="countryCode"
+                  value={formData.countryCode}
+                  onChange={handleChange}
+                  className={errors.countryCode ? 'error' : ''}
+                >
+                  <option value="+1">+1 (USA/Canada)</option>
+                  <option value="+44">+44 (UK)</option>
+                  <option value="+61">+61 (Australia)</option>
+                  <option value="+91">+91 (India)</option>
+                  <option value="+94">+94 (Sri Lanka)</option>
+                  <option value="+81">+81 (Japan)</option>
+                  <option value="+86">+86 (China)</option>
+                  <option value="+33">+33 (France)</option>
+                  <option value="+49">+49 (Germany)</option>
+                  <option value="+39">+39 (Italy)</option>
+                  <option value="+34">+34 (Spain)</option>
+                  <option value="+971">+971 (UAE)</option>
+                  <option value="+65">+65 (Singapore)</option>
+                  <option value="+60">+60 (Malaysia)</option>
+                  <option value="+62">+62 (Indonesia)</option>
+                  <option value="+63">+63 (Philippines)</option>
+                  <option value="+66">+66 (Thailand)</option>
+                  <option value="+82">+82 (South Korea)</option>
+                  <option value="+977">+977 (Nepal)</option>
+                  <option value="+880">+880 (Bangladesh)</option>
+                  <option value="+92">+92 (Pakistan)</option>
+                </select>
+                {errors.countryCode && <span className="error-message">{errors.countryCode}</span>}
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="phoneNumber">Phone Number *</label>
+                <input
+                  type="text"
+                  id="phoneNumber"
+                  name="phoneNumber"
+                  value={formData.phoneNumber}
+                  onChange={handleChange}
+                  className={errors.phoneNumber ? 'error' : ''}
+                  placeholder="Enter phone number"
+                />
+                {errors.phoneNumber && <span className="error-message">{errors.phoneNumber}</span>}
+              </div>
             </div>
           </div>
 
@@ -331,7 +422,7 @@ const AdminProfile = () => {
             <button type="submit" className="btn-save" disabled={loading}>
               {loading ? 'Saving...' : 'Save Changes'}
             </button>
-            <button type="button" className="btn-cancel" onClick={() => navigate('/admin/dashboard')}>
+            <button type="button" className="btn-cancel" onClick={() => navigate('/instructor/dashboard')}>
               Cancel
             </button>
           </div>
@@ -341,4 +432,4 @@ const AdminProfile = () => {
   );
 };
 
-export default AdminProfile;
+export default InstructorProfile;

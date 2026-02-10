@@ -37,11 +37,14 @@ const EditCourse = () => {
   const levels = ['Beginner', 'Intermediate', 'Advanced'];
 
   useEffect(() => {
-    if (!isAuth || user?.userType !== 'instructor') {
+    // Wait for auth to initialize
+    if (user === null) return;
+    
+    if (isAuth && user?.userType === 'instructor') {
+      fetchCourse();
+    } else {
       navigate('/login');
-      return;
     }
-    fetchCourse();
   }, [id, isAuth, user, navigate]);
 
   const fetchCourse = async () => {

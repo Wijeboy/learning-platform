@@ -27,6 +27,7 @@ import AddCourse from './pages/instructor/AddCourse/AddCourse';
 import EditCourse from './pages/instructor/EditCourse/EditCourse';
 import InstructorStudents from './pages/instructor/InstructorStudents/InstructorStudents';
 import InstructorAnalytics from './pages/instructor/InstructorAnalytics/InstructorAnalytics';
+import InstructorProfile from './pages/instructor/InstructorProfile/InstructorProfile';
 import Courses from './pages/Courses/Courses';
 import CourseDetail from './pages/CourseDetail/CourseDetail';
 import Shop from './pages/Shop/Shop';
@@ -230,6 +231,7 @@ function App() {
             <Route path="courses/:id/edit" element={<EditCourse />} />
             <Route path="students" element={<InstructorStudents />} />
             <Route path="analytics" element={<InstructorAnalytics />} />
+            <Route path="profile" element={<InstructorProfile />} />
           </Route>
         </Routes>
       </AuthProvider>

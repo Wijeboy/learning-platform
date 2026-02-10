@@ -54,7 +54,19 @@ const AddCourse = () => {
     }
   };
 
-  if (!isAuth || user?.userType !== 'instructor') {
+  // Redirect only after auth state is fully initialized
+  if (!isAuth && user === null) {
+    navigate('/login');
+    return null;
+  }
+
+  if (isAuth && user?.userType !== 'instructor') {
+    navigate('/login');
+    return null;
+  }
+
+  // Show loading while auth is being checked
+  if (user === null) {
     return null;
   }
 

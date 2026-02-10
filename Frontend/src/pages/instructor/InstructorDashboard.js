@@ -21,11 +21,14 @@ const InstructorDashboard = () => {
   const [recentCourses, setRecentCourses] = useState([]);
 
   useEffect(() => {
-    if (!isAuth || user?.userType !== 'instructor') {
+    // Wait for auth to initialize
+    if (user === null) return;
+    
+    if (isAuth && user?.userType === 'instructor') {
+      fetchDashboardData();
+    } else {
       navigate('/login');
-      return;
     }
-    fetchDashboardData();
   }, [isAuth, user, navigate]);
 
   const fetchDashboardData = async () => {
@@ -63,7 +66,12 @@ const InstructorDashboard = () => {
     }
   };
 
-  if (!isAuth || user?.userType !== 'instructor') {
+  // Show loading while auth is being checked
+  if (user === null) {
+    return null;
+  }
+
+  if (isAuth && user?.userType !== 'instructor') {
     return null;
   }
 

@@ -12,6 +12,9 @@ const Cart = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // Wait for auth to initialize
+    if (user === null) return;
+    
     if (!isAuth) {
       navigate('/login');
       return;

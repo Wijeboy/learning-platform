@@ -13,11 +13,14 @@ const PendingInstructors = () => {
   const [processingId, setProcessingId] = useState(null);
 
   useEffect(() => {
-    if (!isAuth || user?.userType !== 'admin') {
+    // Wait for auth to initialize
+    if (user === null) return;
+    
+    if (isAuth && user?.userType === 'admin') {
+      fetchPendingInstructors();
+    } else {
       navigate('/login');
-      return;
     }
-    fetchPendingInstructors();
   }, [isAuth, user, navigate]);
 
   const fetchPendingInstructors = async () => {
@@ -82,7 +85,11 @@ const PendingInstructors = () => {
     });
   };
 
-  if (!isAuth || user?.userType !== 'admin') {
+  if (user === null) {
+    return null;
+  }
+
+  if (isAuth && user?.userType !== 'admin') {
     return null;
   }
 

@@ -20,10 +20,13 @@ const StudentDashboard = () => {
   });
 
   useEffect(() => {
-    if (!isAuth || user?.userType !== 'student') {
-      navigate('/login');
-    } else {
+    // Wait for auth to initialize
+    if (user === null) return;
+    
+    if (isAuth && user?.userType === 'student') {
       fetchData();
+    } else {
+      navigate('/login');
     }
   }, [isAuth, user, navigate]);
 

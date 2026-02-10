@@ -15,13 +15,14 @@ const AdminDashboard = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Check if user is admin
-    if (!isAuth || user?.userType !== 'admin') {
+    // Wait for auth to initialize
+    if (user === null) return;
+    
+    if (isAuth && user?.userType === 'admin') {
+      fetchStats();
+    } else {
       navigate('/login');
-      return;
     }
-
-    fetchStats();
   }, [isAuth, user, navigate]);
 
   const fetchStats = async () => {

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { FiHome, FiBook, FiUsers, FiBarChart2, FiSettings, FiLogOut, FiPlus } from 'react-icons/fi';
+import { FiHome, FiBook, FiUsers, FiBarChart2, FiUser, FiLogOut, FiPlus } from 'react-icons/fi';
 import { useAuth } from '../context/AuthContext';
 import './InstructorNavbar.css';
 
@@ -39,6 +39,10 @@ const InstructorNavbar = () => {
           <Link to="/instructor/analytics" className="instructor-nav-link">
             <FiBarChart2 className="nav-link-icon" />
             <span>Analytics</span>
+          </Link>
+          <Link to="/instructor/profile" className="instructor-nav-link">
+            <FiUser className="nav-link-icon" />
+            <span>Profile</span>
           </Link>
         </div>
 

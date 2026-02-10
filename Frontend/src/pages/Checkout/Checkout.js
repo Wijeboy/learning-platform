@@ -16,6 +16,9 @@ const Checkout = () => {
   });
 
   React.useEffect(() => {
+    // Wait for auth to initialize
+    if (user === null) return;
+    
     if (!isAuth) {
       navigate('/login');
       return;
