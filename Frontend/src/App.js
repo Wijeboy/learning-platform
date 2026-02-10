@@ -19,6 +19,9 @@ import PendingInstructors from './pages/admin/PendingInstructors';
 import AddProduct from './pages/admin/AddProduct';
 import ManageProducts from './pages/admin/ManageProducts';
 import EditProduct from './pages/admin/EditProduct';
+import AddEvent from './pages/admin/AddEvent';
+import ManageEvents from './pages/admin/ManageEvents';
+import EditEvent from './pages/admin/EditEvent';
 import StudentDashboard from './pages/student/StudentDashboard';
 import StudentCourseView from './pages/student/StudentCourseView';
 import InstructorDashboard from './pages/instructor/InstructorDashboard';
@@ -34,6 +37,8 @@ import Shop from './pages/Shop/Shop';
 import ShopDetail from './pages/ShopDetail/ShopDetail';
 import Cart from './pages/Cart/Cart';
 import Checkout from './pages/Checkout/Checkout';
+import Events from './pages/Events/Events';
+import EventDetail from './pages/EventDetail/EventDetail';
 import './App.css';
 
 // Inactivity timeout component
@@ -96,7 +101,7 @@ function App() {
               <Footer />
             </div>
           } />
-          
+
           <Route path="/home" element={
             <div className="App">
               <Navbar />
@@ -106,7 +111,7 @@ function App() {
               <Footer />
             </div>
           } />
-          
+
           <Route path="/login" element={
             <div className="App">
               <Navbar />
@@ -116,7 +121,7 @@ function App() {
               <Footer />
             </div>
           } />
-          
+
           <Route path="/signup" element={
             <div className="App">
               <Navbar />
@@ -136,7 +141,7 @@ function App() {
               <Footer />
             </div>
           } />
-          
+
           <Route path="/courses/:id" element={
             <div className="App">
               <Navbar />
@@ -156,7 +161,7 @@ function App() {
               <Footer />
             </div>
           } />
-          
+
           <Route path="/shop/:id" element={
             <div className="App">
               <Navbar />
@@ -176,7 +181,7 @@ function App() {
               <Footer />
             </div>
           } />
-          
+
           <Route path="/checkout" element={
             <div className="App">
               <Navbar />
@@ -186,7 +191,27 @@ function App() {
               <Footer />
             </div>
           } />
-          
+
+          <Route path="/events" element={
+            <div className="App">
+              <Navbar />
+              <main style={{ flex: 1 }}>
+                <Events />
+              </main>
+              <Footer />
+            </div>
+          } />
+
+          <Route path="/events/:id" element={
+            <div className="App">
+              <Navbar />
+              <main style={{ flex: 1 }}>
+                <EventDetail />
+              </main>
+              <Footer />
+            </div>
+          } />
+
           {/* Admin Routes with Sidebar Layout */}
           <Route path="/admin" element={<AdminLayout />}>
             <Route path="dashboard" element={<AdminDashboard />} />
@@ -200,6 +225,9 @@ function App() {
             <Route path="add-product" element={<AddProduct />} />
             <Route path="manage-products" element={<ManageProducts />} />
             <Route path="edit-product/:id" element={<EditProduct />} />
+            <Route path="add-event" element={<AddEvent />} />
+            <Route path="manage-events" element={<ManageEvents />} />
+            <Route path="edit-event/:id" element={<EditEvent />} />
           </Route>
 
           {/* Student Routes */}
@@ -212,7 +240,7 @@ function App() {
               <Footer />
             </div>
           } />
-          
+
           <Route path="/student/courses/:id" element={
             <div className="App">
               <Navbar />
@@ -233,6 +261,7 @@ function App() {
             <Route path="analytics" element={<InstructorAnalytics />} />
             <Route path="profile" element={<InstructorProfile />} />
           </Route>
+
         </Routes>
       </AuthProvider>
     </Router>

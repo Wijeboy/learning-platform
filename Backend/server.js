@@ -3,7 +3,6 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const dotenv = require('dotenv');
 const path = require('path');
-const fileUpload = require('express-fileupload');
 
 // Load environment variables
 dotenv.config();
@@ -17,6 +16,7 @@ const enrollmentRoutes = require('./routes/enrollmentRoutes');
 const productRoutes = require('./routes/productRoutes');
 const cartRoutes = require('./routes/cartRoutes');
 const purchaseRoutes = require('./routes/purchaseRoutes');
+const eventRoutes = require('./routes/eventRoutes');
 
 // Initialize express app
 const app = express();
@@ -25,7 +25,6 @@ const app = express();
 app.use(cors());
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
-app.use(fileUpload());
 
 // Serve static files for uploads
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
@@ -39,6 +38,7 @@ app.use('/api/enrollments', enrollmentRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/cart', cartRoutes);
 app.use('/api/purchases', purchaseRoutes);
+app.use('/api/events', eventRoutes);
 
 // Health check route
 app.get('/', (req, res) => {
