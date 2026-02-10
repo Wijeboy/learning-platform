@@ -25,6 +25,8 @@ import InstructorDashboard from './pages/instructor/InstructorDashboard';
 import MyCourses from './pages/instructor/MyCourses/MyCourses';
 import AddCourse from './pages/instructor/AddCourse/AddCourse';
 import EditCourse from './pages/instructor/EditCourse/EditCourse';
+import InstructorStudents from './pages/instructor/InstructorStudents/InstructorStudents';
+import InstructorAnalytics from './pages/instructor/InstructorAnalytics/InstructorAnalytics';
 import Courses from './pages/Courses/Courses';
 import CourseDetail from './pages/CourseDetail/CourseDetail';
 import Shop from './pages/Shop/Shop';
@@ -181,6 +183,8 @@ function App() {
             <Route path="courses" element={<MyCourses />} />
             <Route path="courses/add" element={<AddCourse />} />
             <Route path="courses/:id/edit" element={<EditCourse />} />
+            <Route path="students" element={<InstructorStudents />} />
+            <Route path="analytics" element={<InstructorAnalytics />} />
           </Route>
         </Routes>
       </AuthProvider>
