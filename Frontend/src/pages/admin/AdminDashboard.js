@@ -136,6 +136,12 @@ const AdminDashboard = () => {
             <h3>Manage Events</h3>
             <p>View and manage all events</p>
           </div>
+
+          <div className="action-card" onClick={() => navigate('/admin/manage-blogs')}>
+            <div className="action-icon view">📝</div>
+            <h3>Manage Blogs</h3>
+            <p>View and manage all blog posts</p>
+          </div>
         </div>
       </div>
     </div>

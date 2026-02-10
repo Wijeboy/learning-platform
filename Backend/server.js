@@ -17,6 +17,7 @@ const productRoutes = require('./routes/productRoutes');
 const cartRoutes = require('./routes/cartRoutes');
 const purchaseRoutes = require('./routes/purchaseRoutes');
 const eventRoutes = require('./routes/eventRoutes');
+const blogRoutes = require('./routes/blogRoutes');
 
 // Initialize express app
 const app = express();
@@ -39,6 +40,7 @@ app.use('/api/products', productRoutes);
 app.use('/api/cart', cartRoutes);
 app.use('/api/purchases', purchaseRoutes);
 app.use('/api/events', eventRoutes);
+app.use('/api/blogs', blogRoutes);
 
 // Health check route
 app.get('/', (req, res) => {
