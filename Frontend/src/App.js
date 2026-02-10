@@ -22,6 +22,9 @@ import EditProduct from './pages/admin/EditProduct';
 import AddEvent from './pages/admin/AddEvent';
 import ManageEvents from './pages/admin/ManageEvents';
 import EditEvent from './pages/admin/EditEvent';
+import AddBlog from './pages/admin/AddBlog';
+import ManageBlogs from './pages/admin/ManageBlogs';
+import EditBlog from './pages/admin/EditBlog';
 import StudentDashboard from './pages/student/StudentDashboard';
 import StudentCourseView from './pages/student/StudentCourseView';
 import InstructorDashboard from './pages/instructor/InstructorDashboard';
@@ -39,6 +42,8 @@ import Cart from './pages/Cart/Cart';
 import Checkout from './pages/Checkout/Checkout';
 import Events from './pages/Events/Events';
 import EventDetail from './pages/EventDetail/EventDetail';
+import Blog from './pages/Blog/Blog';
+import BlogDetail from './pages/BlogDetail/BlogDetail';
 import './App.css';
 
 // Inactivity timeout component
@@ -212,6 +217,26 @@ function App() {
             </div>
           } />
 
+          <Route path="/blog" element={
+            <div className="App">
+              <Navbar />
+              <main style={{ flex: 1 }}>
+                <Blog />
+              </main>
+              <Footer />
+            </div>
+          } />
+
+          <Route path="/blog/:id" element={
+            <div className="App">
+              <Navbar />
+              <main style={{ flex: 1 }}>
+                <BlogDetail />
+              </main>
+              <Footer />
+            </div>
+          } />
+
           {/* Admin Routes with Sidebar Layout */}
           <Route path="/admin" element={<AdminLayout />}>
             <Route path="dashboard" element={<AdminDashboard />} />
@@ -228,6 +253,9 @@ function App() {
             <Route path="add-event" element={<AddEvent />} />
             <Route path="manage-events" element={<ManageEvents />} />
             <Route path="edit-event/:id" element={<EditEvent />} />
+            <Route path="add-blog" element={<AddBlog />} />
+            <Route path="manage-blogs" element={<ManageBlogs />} />
+            <Route path="edit-blog/:id" element={<EditBlog />} />
           </Route>
 
           {/* Student Routes */}

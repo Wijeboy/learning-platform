@@ -1,7 +1,7 @@
 import React from 'react';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { FiHome, FiUsers, FiUserCheck, FiShield, FiUserPlus, FiLogOut, FiClock, FiShoppingBag, FiPackage, FiCalendar } from 'react-icons/fi';
+import { FiHome, FiUsers, FiUserCheck, FiShield, FiUserPlus, FiLogOut, FiClock, FiShoppingBag, FiPackage, FiCalendar, FiFileText } from 'react-icons/fi';
 import './AdminLayout.css';
 
 const AdminLayout = () => {
@@ -27,6 +27,8 @@ const AdminLayout = () => {
     { path: '/admin/manage-products', icon: <FiPackage />, label: 'Manage Products' },
     { path: '/admin/add-event', icon: <FiCalendar />, label: 'Add Events' },
     { path: '/admin/manage-events', icon: <FiCalendar />, label: 'Manage Events' },
+    { path: '/admin/add-blog', icon: <FiFileText />, label: 'Add Blogs' },
+    { path: '/admin/manage-blogs', icon: <FiFileText />, label: 'Manage Blogs' },
   ];
 
   return (
