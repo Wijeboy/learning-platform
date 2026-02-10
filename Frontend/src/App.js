@@ -10,7 +10,7 @@ import Login from './pages/Login';
 import ContactPage from './pages/ContactPage';
 import InstructorDetails from './pages/InstructorDetails';
 import Shopdetails from './pages/Shopdetails';
-
+import ShopPage from './pages/ShopPage'; 
 import AdminDashboard from './pages/admin/AdminDashboard';
 import ManageStudents from './pages/admin/ManageStudents';
 import ManageInstructors from './pages/admin/ManageInstructors';
@@ -36,6 +36,7 @@ function App() {
               <Route path="/InstructorDetails" element={<InstructorDetails />} />
                <Route path="/ContactPage" element={<ContactPage />} />
                 <Route path="/Shopdetails" element={<Shopdetails />} />
+                <Route path="/ShopPage" element={<ShopPage />} />
               {/* Add more routes as needed */}
             </Routes>
           </main>
