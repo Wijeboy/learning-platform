@@ -202,8 +202,8 @@ exports.login = async (req, res) => {
       token
     };
 
-    // Add profilePhoto for admins
-    if (userType === 'admin' && user.profilePhoto) {
+    // Add profilePhoto if it exists
+    if (user.profilePhoto) {
       responseData.profilePhoto = user.profilePhoto;
     }
 

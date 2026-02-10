@@ -55,9 +55,23 @@ const InstructorNavbar = () => {
           
           <div className="instructor-user-menu">
             <div className="instructor-user-info">
-              <div className="instructor-avatar">
-                {user?.firstName?.charAt(0).toUpperCase()}
-              </div>
+              {user?.profilePhoto ? (
+                <img 
+                  src={`http://localhost:5001${user.profilePhoto}`} 
+                  alt="Profile" 
+                  className="instructor-avatar"
+                  style={{ 
+                    width: '40px', 
+                    height: '40px', 
+                    borderRadius: '50%', 
+                    objectFit: 'cover' 
+                  }}
+                />
+              ) : (
+                <div className="instructor-avatar">
+                  {user?.firstName?.charAt(0).toUpperCase()}
+                </div>
+              )}
               <span className="instructor-user-name">{user?.firstName} {user?.lastName}</span>
             </div>
             <button onClick={handleLogout} className="btn-logout">

@@ -41,6 +41,10 @@ const studentSchema = new mongoose.Schema({
     minlength: [6, 'Password must be at least 6 characters'],
     select: false
   },
+  profilePhoto: {
+    type: String,
+    default: null
+  },
   role: {
     type: String,
     default: 'student',

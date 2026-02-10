@@ -61,8 +61,73 @@ const InstructorProfile = () => {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
-    setErrors({ ...errors, [name]: '' });
     setSuccessMessage('');
+    
+    // Real-time validation
+    const newErrors = { ...errors };
+    
+    if (name === 'firstName') {
+      if (!value.trim()) {
+        newErrors.firstName = 'First name is required';
+      } else if (value.trim().length < 2) {
+        newErrors.firstName = 'First name must be at least 2 characters';
+      } else if (!/^[a-zA-Z\s]+$/.test(value)) {
+        newErrors.firstName = 'First name can only contain letters';
+      } else {
+        delete newErrors.firstName;
+      }
+    }
+    
+    if (name === 'lastName') {
+      if (!value.trim()) {
+        newErrors.lastName = 'Last name is required';
+      } else if (value.trim().length < 2) {
+        newErrors.lastName = 'Last name must be at least 2 characters';
+      } else if (!/^[a-zA-Z\s]+$/.test(value)) {
+        newErrors.lastName = 'Last name can only contain letters';
+      } else {
+        delete newErrors.lastName;
+      }
+    }
+    
+    if (name === 'countryCode') {
+      if (!value.trim()) {
+        newErrors.countryCode = 'Country code is required';
+      } else if (!/^\+\d{1,4}$/.test(value)) {
+        newErrors.countryCode = 'Invalid country code format (e.g., +1, +94)';
+      } else {
+        delete newErrors.countryCode;
+      }
+    }
+    
+    if (name === 'phoneNumber') {
+      const cleanedNumber = value.replace(/[\s-]/g, '');
+      if (!value.trim()) {
+        newErrors.phoneNumber = 'Phone number is required';
+      } else if (!/^[0-9]{9,11}$/.test(cleanedNumber)) {
+        newErrors.phoneNumber = 'Phone number must be 9-11 digits';
+      } else {
+        delete newErrors.phoneNumber;
+      }
+    }
+    
+    if (name === 'newPassword') {
+      if (value && value.length < 6) {
+        newErrors.newPassword = 'Password must be at least 6 characters';
+      } else {
+        delete newErrors.newPassword;
+      }
+    }
+    
+    if (name === 'confirmPassword') {
+      if (value !== formData.newPassword) {
+        newErrors.confirmPassword = 'Passwords do not match';
+      } else {
+        delete newErrors.confirmPassword;
+      }
+    }
+    
+    setErrors(newErrors);
   };
 
   const handlePhotoChange = async (e) => {
@@ -97,18 +162,28 @@ const InstructorProfile = () => {
       
       const response = await uploadInstructorProfilePhoto(formData);
       
-      // Update user in context with photo
+      // Backend returns { success, message, profilePhoto }
+      const photoPath = response.profilePhoto;
+      
+      // Update user in context with photo and preserve all user data
       const updatedUser = { 
-        ...user, 
-        profilePhoto: response.profilePhoto 
+        ...user,
+        profilePhoto: photoPath,
+        token: user.token,
+        userType: user.userType
       };
       
-      // Store updated user data
+      // Store updated user data in localStorage
       localStorage.setItem('user', JSON.stringify(updatedUser));
+      if (user.token) {
+        localStorage.setItem('token', user.token);
+      }
+      
+      // Update context
       login(updatedUser);
       
       setSuccessMessage('Profile photo updated successfully!');
-      setPhotoPreview(`http://localhost:5001${response.profilePhoto}`);
+      setPhotoPreview(`http://localhost:5001${photoPath}`);
     } catch (error) {
       console.error('Error uploading photo:', error);
       setErrors({ photo: error.message || 'Failed to upload photo' });
@@ -150,8 +225,8 @@ const InstructorProfile = () => {
     // Phone number validation
     if (!formData.phoneNumber.trim()) {
       newErrors.phoneNumber = 'Phone number is required';
-    } else if (!/^[0-9]{7,15}$/.test(formData.phoneNumber.replace(/[\s-]/g, ''))) {
-      newErrors.phoneNumber = 'Phone number must be 7-15 digits';
+    } else if (!/^[0-9]{9,11}$/.test(formData.phoneNumber.replace(/[\s-]/g, ''))) {
+      newErrors.phoneNumber = 'Phone number must be 9-11 digits';
     }
 
     // Password validation only if user wants to change it
