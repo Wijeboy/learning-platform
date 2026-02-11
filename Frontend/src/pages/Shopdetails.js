@@ -12,12 +12,12 @@ const CoursePage = () => {
   ];
 
   return (
-    <div className="page-wrapper">
-      {/* 1. HEADER / BREADCRUMB */}
-      <header className="page-header">
+    <div className="contact-container">
+       {/* Header Section */}
+      <header className="shop-header">
         <div className="container">
-          <h1>Shop Details</h1>
-          <p>Home /Shop Details</p>
+          <h1>Course Details </h1>
+          <p>Home /<span>Course Details</span></p>
         </div>
       </header>
 

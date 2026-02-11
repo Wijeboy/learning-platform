@@ -4,14 +4,14 @@ import './ContactPage.css';
 const ContactPage = () => {
   return (
     <div className="contact-container">
-      {/* Hero Section */}
-      <section className="hero-section">
-        <h1>Contact With Us</h1>
-        <div className="breadcrumb">
-          Home / <span>Contact</span>
+       {/* Header Section */}
+      <header className="shop-header">
+        <div className="container">
+          <h1>Contact Page</h1>
+          <p>Home /<span>Contact</span></p>
         </div>
-      </section>
-
+      </header>
+      
       {/* Main Content */}
       <section className="contact-content">
         {/* Contact Information */}
