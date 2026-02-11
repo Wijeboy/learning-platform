@@ -4,6 +4,7 @@ import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import SignUp from './pages/SignUp';
 import './App.css';
+import CourseDetails from './pages/CourseDetails';
 
 function App() {
   return (
@@ -15,7 +16,12 @@ function App() {
             <Route path="/" element={<SignUp />} />
             <Route path="/signup" element={<SignUp />} />
             {/* Add more routes as needed */}
+            <Routes>
+            <Route path="CourseDetails" element={<CourseDetails />} />
+            <Route path="/CCourseDetails" element={<CourseDetails />} />
+            </Routes>
           </Routes>
+          
         </main>
         <Footer />
       </div>
