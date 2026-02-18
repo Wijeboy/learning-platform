@@ -25,11 +25,14 @@ exports.protect = async (req, res, next) => {
 
       // Try to find user in all collections
       let user = await Student.findById(decoded.id).select('-password');
+      let userType = 'student';
       if (!user) {
         user = await Instructor.findById(decoded.id).select('-password');
+        userType = 'instructor';
       }
       if (!user) {
         user = await Admin.findById(decoded.id).select('-password');
+        userType = 'admin';
       }
 
       if (!user) {
@@ -39,8 +42,9 @@ exports.protect = async (req, res, next) => {
         });
       }
 
-      // Set req.user for all routes
+      // Set req.user for all routes with userType attached
       req.user = user;
+      req.user.userType = userType;
       
       // Also set specific properties for backward compatibility
       req.student = user;

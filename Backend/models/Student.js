@@ -27,13 +27,13 @@ const studentSchema = new mongoose.Schema({
   },
   phoneNumber: {
     type: String,
-    required: [true, 'Please provide your phone number'],
-    trim: true
+    trim: true,
+    default: ''
   },
   countryCode: {
     type: String,
-    required: [true, 'Please provide your country code'],
-    trim: true
+    trim: true,
+    default: ''
   },
   password: {
     type: String,
@@ -70,6 +70,9 @@ const studentSchema = new mongoose.Schema({
 studentSchema.pre('save', async function(next) {
   // Only hash the password if it has been modified
   if (!this.isModified('password')) return next();
+  
+  // Only hash if password exists (for updates without password changes)
+  if (!this.password) return next();
   
   // Hash password with cost of 12
   this.password = await bcrypt.hash(this.password, 12);

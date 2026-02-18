@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { getMyEnrollments } from '../../services/enrollmentService';
 import { getMyPurchases } from '../../services/purchaseService';
-import { FiPlay, FiDownload } from 'react-icons/fi';
+import { FiPlay, FiDownload, FiBookOpen, FiTrendingUp, FiAward, FiClock } from 'react-icons/fi';
 import './StudentDashboard.css';
 
 const StudentDashboard = () => {
@@ -77,34 +77,36 @@ const StudentDashboard = () => {
   return (
     <div className="student-dashboard">
       <div className="dashboard-header">
-        <h1>Welcome, {user?.firstName} {user?.lastName}!</h1>
-        <p>Your Learning Dashboard</p>
+        <div className="header-content">
+          <h1>Welcome back, {user?.firstName}!</h1>
+          <p>Continue your learning journey</p>
+        </div>
       </div>
 
       <div className="dashboard-stats">
         <div className="stat-card">
-          <div className="stat-icon">📚</div>
+          <div className="stat-icon"><FiBookOpen /></div>
           <div className="stat-info">
             <h3>{stats.enrolled}</h3>
             <p>Enrolled Courses</p>
           </div>
         </div>
         <div className="stat-card">
-          <div className="stat-icon">✅</div>
+          <div className="stat-icon"><FiAward /></div>
           <div className="stat-info">
             <h3>{stats.completed}</h3>
             <p>Completed Courses</p>
           </div>
         </div>
         <div className="stat-card">
-          <div className="stat-icon">🎯</div>
+          <div className="stat-icon"><FiClock /></div>
           <div className="stat-info">
             <h3>{stats.inProgress}</h3>
             <p>In Progress</p>
           </div>
         </div>
         <div className="stat-card">
-          <div className="stat-icon">🏆</div>
+          <div className="stat-icon"><FiTrendingUp /></div>
           <div className="stat-info">
             <h3>{stats.certificates}</h3>
             <p>Certificates</p>

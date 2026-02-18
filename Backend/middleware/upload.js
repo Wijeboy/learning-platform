@@ -21,6 +21,16 @@ const pdfStorage = multer.diskStorage({
   }
 });
 
+// Set up storage for profile photos
+const profileStorage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, 'uploads/profiles/');
+  },
+  filename: function (req, file, cb) {
+    cb(null, `${Date.now()}-${file.originalname}`);
+  }
+});
+
 // File filter for images
 const imageFilter = (req, file, cb) => {
   const allowedTypes = /jpeg|jpg|png|gif|webp/;
@@ -55,6 +65,13 @@ const uploadPDF = multer({
   fileFilter: pdfFilter
 });
 
+// Profile photo upload
+const uploadProfile = multer({
+  storage: profileStorage,
+  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
+  fileFilter: imageFilter
+});
+
 // Combined upload for products (image + pdf)
 const uploadProduct = multer({
   storage: multer.diskStorage({
@@ -84,5 +101,6 @@ const uploadProduct = multer({
 module.exports = {
   uploadImage,
   uploadPDF,
-  uploadProduct
+  uploadProduct,
+  uploadProfile
 };

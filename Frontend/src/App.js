@@ -27,6 +27,7 @@ import ManageBlogs from './pages/admin/ManageBlogs';
 import EditBlog from './pages/admin/EditBlog';
 import StudentDashboard from './pages/student/StudentDashboard';
 import StudentCourseView from './pages/student/StudentCourseView';
+import StudentProfile from './pages/student/StudentProfile';
 import InstructorDashboard from './pages/instructor/InstructorDashboard';
 import MyCourses from './pages/instructor/MyCourses/MyCourses';
 import AddCourse from './pages/instructor/AddCourse/AddCourse';
@@ -268,7 +269,17 @@ function App() {
               <Footer />
             </div>
           } />
-
+          
+          <Route path="/student/profile" element={
+            <div className="App">
+              <Navbar />
+              <main style={{ flex: 1 }}>
+                <StudentProfile />
+              </main>
+              <Footer />
+            </div>
+          } />
+          
           <Route path="/student/courses/:id" element={
             <div className="App">
               <Navbar />
