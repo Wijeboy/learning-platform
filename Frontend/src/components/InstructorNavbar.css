@@ -1,0 +1,205 @@
+.instructor-navbar {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  color: white;
+}
+
+.instructor-navbar-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 70px;
+  gap: 2rem;
+}
+
+.instructor-navbar-logo {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  text-decoration: none;
+  color: white;
+  flex-shrink: 0;
+}
+
+.instructor-logo-image {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+}
+
+.instructor-brand {
+  font-size: 1.3rem;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+}
+
+.instructor-navbar-links {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex: 1;
+}
+
+.instructor-nav-link {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1.2rem;
+  color: rgba(255, 255, 255, 0.9);
+  text-decoration: none;
+  border-radius: 10px;
+  transition: all 0.3s ease;
+  font-weight: 500;
+  font-size: 0.95rem;
+}
+
+.instructor-nav-link:hover {
+  background: rgba(255, 255, 255, 0.15);
+  color: white;
+}
+
+.instructor-nav-link.active {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+}
+
+.nav-link-icon {
+  font-size: 1.1rem;
+}
+
+.instructor-navbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  flex-shrink: 0;
+}
+
+.btn-create-course-nav {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.65rem 1.5rem;
+  background: white;
+  color: #667eea;
+  text-decoration: none;
+  border-radius: 25px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.btn-create-course-nav:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.plus-icon {
+  font-size: 1.1rem;
+}
+
+.instructor-user-menu {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.instructor-user-info {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.instructor-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: white;
+  color: #667eea;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 1.1rem;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.instructor-user-name {
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.btn-logout {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.65rem 1.2rem;
+  background: rgba(255, 255, 255, 0.15);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 25px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-logout:hover {
+  background: rgba(255, 255, 255, 0.25);
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+.logout-icon {
+  font-size: 1rem;
+}
+
+@media (max-width: 1024px) {
+  .instructor-navbar-container {
+    padding: 0 1rem;
+    gap: 1rem;
+  }
+
+  .instructor-nav-link span {
+    display: none;
+  }
+
+  .instructor-nav-link {
+    padding: 0.6rem;
+  }
+
+  .instructor-user-name {
+    display: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .instructor-navbar-container {
+    height: 60px;
+  }
+
+  .instructor-brand {
+    font-size: 1.1rem;
+  }
+
+  .btn-create-course-nav span {
+    display: none;
+  }
+
+  .btn-create-course-nav {
+    padding: 0.65rem;
+  }
+
+  .btn-logout span {
+    display: none;
+  }
+
+  .btn-logout {
+    padding: 0.65rem;
+  }
+}

@@ -1,0 +1,145 @@
+.events-page {
+  min-height: 100vh;
+  background: #f5f5f5;
+  padding: 2rem 0;
+}
+
+.events-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+.loading-state {
+  text-align: center;
+  padding: 3rem;
+  color: #666;
+  font-size: 1.1rem;
+}
+
+.events-header {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 2rem;
+}
+
+.events-count {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin: 0;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 4rem 2rem;
+  background: #fff;
+  border-radius: 12px;
+  color: #999;
+}
+
+.empty-state p {
+  font-size: 1.1rem;
+}
+
+.events-grid-public {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 2rem;
+}
+
+.public-event-card {
+  background: #fff;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s, box-shadow 0.3s;
+  cursor: pointer;
+}
+
+.public-event-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+}
+
+.public-event-image {
+  width: 100%;
+  height: 200px;
+  overflow: hidden;
+  background: #f7fafc;
+}
+
+.public-event-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.public-event-info {
+  padding: 1.5rem;
+}
+
+.public-event-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #000000;
+  margin: 0 0 1rem 0;
+  line-height: 1.4;
+}
+
+.public-event-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.meta-item-public {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #618989;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.meta-icon-public {
+  font-size: 0.95rem;
+}
+
+.public-event-category {
+  display: inline-block;
+  padding: 0.4rem 0.8rem;
+  background: #ffd700;
+  color: #1a1a1a;
+  border-radius: 12px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+@media (max-width: 1200px) {
+  .events-grid-public {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 992px) {
+  .events-grid-public {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .events-page {
+    padding: 1rem 0;
+  }
+
+  .events-container {
+    padding: 0 1rem;
+  }
+
+  .events-grid-public {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+}

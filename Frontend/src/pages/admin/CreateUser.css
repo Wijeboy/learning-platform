@@ -76,6 +76,18 @@
   margin-top: 0.25rem;
 }
 
+.success-message {
+  color: #28a745;
+  font-size: 0.85rem;
+  margin-top: 0.25rem;
+}
+
+.checking-message {
+  color: #667eea;
+  font-size: 0.85rem;
+  margin-top: 0.25rem;
+}
+
 .btn-submit {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: #fff;

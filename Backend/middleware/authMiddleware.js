@@ -1,5 +1,7 @@
 const jwt = require('jsonwebtoken');
 const Student = require('../models/Student');
+const Instructor = require('../models/Instructor');
+const Admin = require('../models/Admin');
 
 exports.protect = async (req, res, next) => {
   try {
@@ -21,15 +23,31 @@ exports.protect = async (req, res, next) => {
       // Verify token
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-      // Get student from token
-      req.student = await Student.findById(decoded.id);
+      // Try to find user in all collections
+      let user = await Student.findById(decoded.id).select('-password');
+      let userType = 'student';
+      if (!user) {
+        user = await Instructor.findById(decoded.id).select('-password');
+        userType = 'instructor';
+      }
+      if (!user) {
+        user = await Admin.findById(decoded.id).select('-password');
+        userType = 'admin';
+      }
 
-      if (!req.student) {
+      if (!user) {
         return res.status(401).json({
           success: false,
-          message: 'Student not found'
+          message: 'User not found'
         });
       }
+
+      // Set req.user for all routes with userType attached
+      req.user = user;
+      req.user.userType = userType;
+      
+      // Also set specific properties for backward compatibility
+      req.student = user;
 
       next();
     } catch (error) {

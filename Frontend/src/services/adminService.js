@@ -253,3 +253,122 @@ export const uploadProfilePhoto = async (formData) => {
     throw error;
   }
 };
+
+// Check if email exists
+export const checkEmailExists = async (email) => {
+  try {
+    const token = localStorage.getItem('token');
+
+    if (!token) {
+      throw new Error('No token found');
+    }
+
+    const response = await fetch(`${API_URL}/admin/check-email/${encodeURIComponent(email)}`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || 'Failed to check email');
+    }
+
+    return data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+// Get pending instructor applications
+export const getPendingInstructors = async () => {
+  try {
+    const token = localStorage.getItem('token');
+
+    if (!token) {
+      throw new Error('No token found');
+    }
+
+    const response = await fetch(`${API_URL}/admin/pending-instructors`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+
+    // Check if response is JSON
+    const contentType = response.headers.get('content-type');
+    if (!contentType || !contentType.includes('application/json')) {
+      throw new Error('Server returned non-JSON response. Please check if backend is running.');
+    }
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || 'Failed to fetch pending instructors');
+    }
+
+    return data;
+  } catch (error) {
+    console.error('getPendingInstructors error:', error);
+    throw error;
+  }
+};
+
+// Approve instructor application
+export const approveInstructor = async (instructorId) => {
+  try {
+    const token = localStorage.getItem('token');
+
+    if (!token) {
+      throw new Error('No token found');
+    }
+
+    const response = await fetch(`${API_URL}/admin/approve-instructor/${instructorId}`, {
+      method: 'PUT',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || 'Failed to approve instructor');
+    }
+
+    return data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+// Decline instructor application
+export const declineInstructor = async (instructorId) => {
+  try {
+    const token = localStorage.getItem('token');
+
+    if (!token) {
+      throw new Error('No token found');
+    }
+
+    const response = await fetch(`${API_URL}/admin/decline-instructor/${instructorId}`, {
+      method: 'PUT',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || 'Failed to decline instructor');
+    }
+
+    return data;
+  } catch (error) {
+    throw error;
+  }
+};

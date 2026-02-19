@@ -47,6 +47,10 @@ const Login = () => {
       setTimeout(() => {
         if (response.data.userType === 'admin') {
           navigate('/admin/dashboard');
+        } else if (response.data.userType === 'student') {
+          navigate('/student/dashboard');
+        } else if (response.data.userType === 'instructor') {
+          navigate('/instructor/dashboard');
         } else {
           navigate('/');
         }

@@ -14,7 +14,8 @@ const SignUp = () => {
     email: '',
     password: '',
     confirmPassword: '',
-    agreeToTerms: false
+    agreeToTerms: false,
+    userType: 'student' // student or instructor
   });
 
   const [validation, setValidation] = useState({
@@ -242,20 +243,26 @@ const SignUp = () => {
         return;
       }
 
+      const selectedCountry = countries.find(c => c.code === formData.countryCode);
       const response = await registerStudent({
         firstName: formData.firstName,
         lastName: formData.lastName,
         email: formData.email,
         phoneNumber: formData.phoneNumber.replace(/\D/g, ''),
-        countryCode: formData.countryCode,
-        password: formData.password
+        countryCode: selectedCountry?.dialCode || '+94',
+        password: formData.password,
+        userType: formData.userType
       });
 
-      setSuccess('Registration successful! Redirecting...');
+      if (formData.userType === 'instructor') {
+        setSuccess('Registration submitted! Your application will be reviewed by an admin. You will be notified once approved.');
+      } else {
+        setSuccess('Registration successful! Redirecting...');
+      }
       
       setTimeout(() => {
         navigate('/');
-      }, 2000);
+      }, 3000);
 
     } catch (err) {
       setError(err.message || 'Registration failed. Please try again.');
@@ -284,6 +291,26 @@ const SignUp = () => {
           {success && <div className="alert alert-success">{success}</div>}
           
           <form onSubmit={handleSubmit} className="signup-form">
+            {/* User Type Selection */}
+            <div className="form-group">
+              <label htmlFor="userType">Register As</label>
+              <select
+                id="userType"
+                name="userType"
+                value={formData.userType}
+                onChange={handleChange}
+                className="form-select"
+              >
+                <option value="student">Student</option>
+                <option value="instructor">Instructor</option>
+              </select>
+              {formData.userType === 'instructor' && (
+                <small className="info-text">
+                  Note: Instructor accounts require admin approval before you can login.
+                </small>
+              )}
+            </div>
+
             <div className="form-row">
               <div className="form-group">
                 <label htmlFor="firstName">First Name</label>
