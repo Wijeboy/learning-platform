@@ -9,6 +9,7 @@ dotenv.config();
 // Import routes
 const authRoutes = require('./routes/authRoutes');
 const adminRoutes = require('./routes/adminRoutes');
+const shopRoutes = require('./routes/shopRoutes');
 
 // Initialize express app
 const app = express();
@@ -21,6 +22,7 @@ app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/shops', shopRoutes);
 
 // Health check route
 app.get('/', (req, res) => {
