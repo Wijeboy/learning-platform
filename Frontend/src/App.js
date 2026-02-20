@@ -45,6 +45,7 @@ import Events from './pages/Events/Events';
 import EventDetail from './pages/EventDetail/EventDetail';
 import Blog from './pages/Blog/Blog';
 import BlogDetail from './pages/BlogDetail/BlogDetail';
+import AboutUs from './pages/AboutUs/AboutUs';
 import './App.css';
 
 // Inactivity timeout component
@@ -237,6 +238,16 @@ function App() {
               <Footer />
             </div>
           } />
+
+          <Route path="/about" element={
+  <div className="App">
+    <Navbar />
+    <main style={{ flex: 1 }}>
+      <AboutUs />
+    </main>
+    <Footer />
+  </div>
+} />
 
           {/* Admin Routes with Sidebar Layout */}
           <Route path="/admin" element={<AdminLayout />}>
