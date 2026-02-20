@@ -12,11 +12,14 @@ const ManageAdmins = () => {
   const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
-    if (!isAuth || user?.userType !== 'admin') {
+    // Wait for auth to initialize
+    if (user === null) return;
+    
+    if (isAuth && user?.userType === 'admin') {
+      fetchAdmins();
+    } else {
       navigate('/login');
-      return;
     }
-    fetchAdmins();
   }, [isAuth, user, navigate]);
 
   const fetchAdmins = async () => {

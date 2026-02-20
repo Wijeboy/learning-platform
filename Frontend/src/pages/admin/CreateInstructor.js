@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { createInstructor } from '../../services/adminService';
-import { countries } from '../../utils/phoneValidation';
+import { createInstructor, checkEmailExists } from '../../services/adminService';
+import { countries, validatePhoneNumber } from '../../utils/phoneValidation';
 import './CreateUser.css';
 
 const CreateInstructor = () => {
@@ -13,65 +13,154 @@ const CreateInstructor = () => {
     firstName: '',
     lastName: '',
     email: '',
-    countryCode: '+1',
+    countryCode: 'AF',
     phoneNumber: '',
     password: '',
     confirmPassword: ''
   });
   const [errors, setErrors] = useState({});
+  const [touched, setTouched] = useState({});
+  const [emailChecking, setEmailChecking] = useState(false);
 
-  if (!isAuth || user?.userType !== 'admin') {
-    navigate('/login');
-    return null;
-  }
-
-  const validateForm = () => {
-    const newErrors = {};
-
-    if (!formData.firstName.trim()) {
-      newErrors.firstName = 'First name is required';
+  // Real-time validation for firstName
+  useEffect(() => {
+    if (touched.firstName) {
+      if (!formData.firstName.trim()) {
+        setErrors(prev => ({ ...prev, firstName: 'First name is required' }));
+      } else if (formData.firstName.trim().length < 2) {
+        setErrors(prev => ({ ...prev, firstName: 'First name must be at least 2 characters' }));
+      } else {
+        setErrors(prev => ({ ...prev, firstName: '' }));
+      }
     }
+  }, [formData.firstName, touched.firstName]);
 
-    if (!formData.lastName.trim()) {
-      newErrors.lastName = 'Last name is required';
+  // Real-time validation for lastName
+  useEffect(() => {
+    if (touched.lastName) {
+      if (!formData.lastName.trim()) {
+        setErrors(prev => ({ ...prev, lastName: 'Last name is required' }));
+      } else if (formData.lastName.trim().length < 2) {
+        setErrors(prev => ({ ...prev, lastName: 'Last name must be at least 2 characters' }));
+      } else {
+        setErrors(prev => ({ ...prev, lastName: '' }));
+      }
     }
+  }, [formData.lastName, touched.lastName]);
 
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!formData.email) {
-      newErrors.email = 'Email is required';
-    } else if (!emailRegex.test(formData.email)) {
-      newErrors.email = 'Invalid email format';
+  // Real-time email validation with existence check
+  useEffect(() => {
+    if (touched.email && formData.email) {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      
+      if (!emailRegex.test(formData.email)) {
+        setErrors(prev => ({ ...prev, email: 'Invalid email format' }));
+        return;
+      }
+
+      // Debounce email check
+      const timeoutId = setTimeout(async () => {
+        try {
+          setEmailChecking(true);
+          const result = await checkEmailExists(formData.email);
+          if (result.exists) {
+            setErrors(prev => ({ ...prev, email: `Email already registered as ${result.userType}` }));
+          } else {
+            setErrors(prev => ({ ...prev, email: '' }));
+          }
+        } catch (error) {
+          console.error('Email check error:', error);
+        } finally {
+          setEmailChecking(false);
+        }
+      }, 800);
+
+      return () => clearTimeout(timeoutId);
     }
+  }, [formData.email, touched.email]);
 
-    if (!formData.phoneNumber.trim()) {
-      newErrors.phoneNumber = 'Phone number is required';
+  // Real-time phone number validation
+  useEffect(() => {
+    if (touched.phoneNumber && formData.phoneNumber) {
+      const phoneValidation = validatePhoneNumber(formData.phoneNumber, formData.countryCode);
+      if (!phoneValidation.valid) {
+        setErrors(prev => ({ ...prev, phoneNumber: phoneValidation.message }));
+      } else {
+        setErrors(prev => ({ ...prev, phoneNumber: '' }));
+      }
     }
+  }, [formData.phoneNumber, formData.countryCode, touched.phoneNumber]);
 
-    if (!formData.password) {
-      newErrors.password = 'Password is required';
-    } else if (formData.password.length < 6) {
-      newErrors.password = 'Password must be at least 6 characters';
+  // Real-time password validation
+  useEffect(() => {
+    if (touched.password) {
+      if (!formData.password) {
+        setErrors(prev => ({ ...prev, password: 'Password is required' }));
+      } else if (formData.password.length < 6) {
+        setErrors(prev => ({ ...prev, password: 'Password must be at least 6 characters' }));
+      } else if (!/(?=.*[a-z])/.test(formData.password)) {
+        setErrors(prev => ({ ...prev, password: 'Password must contain at least one lowercase letter' }));
+      } else if (!/(?=.*[A-Z])/.test(formData.password)) {
+        setErrors(prev => ({ ...prev, password: 'Password must contain at least one uppercase letter' }));
+      } else if (!/(?=.*\d)/.test(formData.password)) {
+        setErrors(prev => ({ ...prev, password: 'Password must contain at least one number' }));
+      } else {
+        setErrors(prev => ({ ...prev, password: '' }));
+      }
     }
+  }, [formData.password, touched.password]);
 
-    if (formData.password !== formData.confirmPassword) {
-      newErrors.confirmPassword = 'Passwords do not match';
+  // Real-time confirm password validation
+  useEffect(() => {
+    if (touched.confirmPassword) {
+      if (formData.password !== formData.confirmPassword) {
+        setErrors(prev => ({ ...prev, confirmPassword: 'Passwords do not match' }));
+      } else {
+        setErrors(prev => ({ ...prev, confirmPassword: '' }));
+      }
     }
+  }, [formData.password, formData.confirmPassword, touched.confirmPassword]);
 
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
+  // Check authentication and redirect if needed
+  useEffect(() => {
+    // Wait for auth to initialize
+    if (user === null) return;
+    
+    if (!isAuth || user?.userType !== 'admin') {
+      navigate('/login');
+    }
+  }, [isAuth, user, navigate]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
-    // Clear error when user starts typing
-    if (errors[name]) {
-      setErrors({ ...errors, [name]: '' });
-    }
+    setTouched({ ...touched, [name]: true });
+  };
+
+  const handleBlur = (e) => {
+    const { name } = e.target;
+    setTouched({ ...touched, [name]: true });
+  };
+
+  const validateForm = () => {
+    const hasErrors = Object.values(errors).some(error => error !== '');
+    const hasEmptyFields = !formData.firstName || !formData.lastName || !formData.email || 
+                          !formData.phoneNumber || !formData.password || !formData.confirmPassword;
+    return !hasErrors && !hasEmptyFields && !emailChecking;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Mark all fields as touched
+    setTouched({
+      firstName: true,
+      lastName: true,
+      email: true,
+      phoneNumber: true,
+      password: true,
+      confirmPassword: true
+    });
 
     if (!validateForm()) {
       return;
@@ -79,7 +168,12 @@ const CreateInstructor = () => {
 
     setLoading(true);
     try {
-      await createInstructor(formData);
+      const selectedCountry = countries.find(c => c.code === formData.countryCode);
+      const instructorData = {
+        ...formData,
+        countryCode: selectedCountry?.dialCode || '+93'
+      };
+      await createInstructor(instructorData);
       alert('Instructor created successfully!');
       navigate('/admin/manage-instructors');
     } catch (error) {
@@ -93,6 +187,14 @@ const CreateInstructor = () => {
       setLoading(false);
     }
   };
+
+  if (user === null) {
+    return null;
+  }
+
+  if (isAuth && user?.userType !== 'admin') {
+    return null;
+  }
 
   return (
     <div className="create-user">
@@ -114,9 +216,11 @@ const CreateInstructor = () => {
                 name="firstName"
                 value={formData.firstName}
                 onChange={handleChange}
-                className={errors.firstName ? 'error' : ''}
+                onBlur={handleBlur}
+                className={touched.firstName && errors.firstName ? 'error' : ''}
               />
-              {errors.firstName && <span className="error-message">{errors.firstName}</span>}
+              {touched.firstName && errors.firstName && <span className="error-message">{errors.firstName}</span>}
+              {touched.firstName && !errors.firstName && formData.firstName && <span className="success-message">✓</span>}
             </div>
 
             <div className="form-group">
@@ -127,9 +231,11 @@ const CreateInstructor = () => {
                 name="lastName"
                 value={formData.lastName}
                 onChange={handleChange}
-                className={errors.lastName ? 'error' : ''}
+                onBlur={handleBlur}
+                className={touched.lastName && errors.lastName ? 'error' : ''}
               />
-              {errors.lastName && <span className="error-message">{errors.lastName}</span>}
+              {touched.lastName && errors.lastName && <span className="error-message">{errors.lastName}</span>}
+              {touched.lastName && !errors.lastName && formData.lastName && <span className="success-message">✓</span>}
             </div>
           </div>
 
@@ -141,9 +247,12 @@ const CreateInstructor = () => {
               name="email"
               value={formData.email}
               onChange={handleChange}
-              className={errors.email ? 'error' : ''}
+              onBlur={handleBlur}
+              className={touched.email && errors.email ? 'error' : ''}
             />
-            {errors.email && <span className="error-message">{errors.email}</span>}
+            {emailChecking && <span className="checking-message">Checking email...</span>}
+            {touched.email && !emailChecking && errors.email && <span className="error-message">{errors.email}</span>}
+            {touched.email && !emailChecking && !errors.email && formData.email && <span className="success-message">✓</span>}
           </div>
 
           <div className="form-row">
@@ -171,10 +280,12 @@ const CreateInstructor = () => {
                 name="phoneNumber"
                 value={formData.phoneNumber}
                 onChange={handleChange}
-                className={errors.phoneNumber ? 'error' : ''}
+                onBlur={handleBlur}
+                className={touched.phoneNumber && errors.phoneNumber ? 'error' : ''}
                 placeholder="Enter phone number"
               />
-              {errors.phoneNumber && <span className="error-message">{errors.phoneNumber}</span>}
+              {touched.phoneNumber && errors.phoneNumber && <span className="error-message">{errors.phoneNumber}</span>}
+              {touched.phoneNumber && !errors.phoneNumber && formData.phoneNumber && <span className="success-message">✓</span>}
             </div>
           </div>
 
@@ -187,10 +298,12 @@ const CreateInstructor = () => {
                 name="password"
                 value={formData.password}
                 onChange={handleChange}
-                className={errors.password ? 'error' : ''}
+                onBlur={handleBlur}
+                className={touched.password && errors.password ? 'error' : ''}
                 placeholder="Min 6 characters"
               />
-              {errors.password && <span className="error-message">{errors.password}</span>}
+              {touched.password && errors.password && <span className="error-message">{errors.password}</span>}
+              {touched.password && !errors.password && formData.password && <span className="success-message">✓</span>}
             </div>
 
             <div className="form-group">
@@ -201,13 +314,15 @@ const CreateInstructor = () => {
                 name="confirmPassword"
                 value={formData.confirmPassword}
                 onChange={handleChange}
-                className={errors.confirmPassword ? 'error' : ''}
+                onBlur={handleBlur}
+                className={touched.confirmPassword && errors.confirmPassword ? 'error' : ''}
               />
-              {errors.confirmPassword && <span className="error-message">{errors.confirmPassword}</span>}
+              {touched.confirmPassword && errors.confirmPassword && <span className="error-message">{errors.confirmPassword}</span>}
+              {touched.confirmPassword && !errors.confirmPassword && formData.confirmPassword && <span className="success-message">✓</span>}
             </div>
           </div>
 
-          <button type="submit" className="btn-submit" disabled={loading}>
+          <button type="submit" className="btn-submit" disabled={loading || !validateForm() || emailChecking}>
             {loading ? 'Creating...' : 'Create Instructor'}
           </button>
         </form>

@@ -29,6 +29,34 @@ exports.getAllUsers = async (req, res) => {
   }
 };
 
+// @desc    Check if email exists in any user collection
+// @route   GET /api/admin/check-email/:email
+// @access  Private/Admin
+exports.checkEmailExists = async (req, res) => {
+  try {
+    const { email } = req.params;
+
+    // Check in all three collections
+    const studentExists = await Student.findOne({ email });
+    const instructorExists = await Instructor.findOne({ email });
+    const adminExists = await Admin.findOne({ email });
+
+    const exists = !!(studentExists || instructorExists || adminExists);
+
+    res.status(200).json({
+      success: true,
+      exists,
+      userType: studentExists ? 'student' : instructorExists ? 'instructor' : adminExists ? 'admin' : null
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Error checking email',
+      error: error.message
+    });
+  }
+};
+
 // @desc    Create new admin
 // @route   POST /api/admin/create-admin
 // @access  Private/Admin
@@ -108,7 +136,11 @@ exports.createInstructor = async (req, res) => {
       email,
       phoneNumber,
       countryCode,
-      password
+      password,
+      approvalStatus: 'approved',
+      isActive: true,
+      approvedBy: req.user._id,
+      approvedAt: new Date()
     });
 
     res.status(201).json({
@@ -373,6 +405,95 @@ exports.uploadProfilePhoto = async (req, res) => {
     res.status(500).json({
       success: false,
       message: 'Error uploading profile photo',
+      error: error.message
+    });
+  }
+};
+
+// @desc    Get pending instructor applications
+// @route   GET /api/admin/pending-instructors
+// @access  Private/Admin
+exports.getPendingInstructors = async (req, res) => {
+  try {
+    const pendingInstructors = await Instructor.find({ approvalStatus: 'pending' })
+      .select('-password')
+      .sort({ createdAt: -1 });
+
+    res.status(200).json({
+      success: true,
+      data: pendingInstructors,
+      count: pendingInstructors.length
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Error fetching pending instructors',
+      error: error.message
+    });
+  }
+};
+
+// @desc    Approve instructor application
+// @route   PUT /api/admin/approve-instructor/:id
+// @access  Private/Admin
+exports.approveInstructor = async (req, res) => {
+  try {
+    const instructor = await Instructor.findById(req.params.id);
+
+    if (!instructor) {
+      return res.status(404).json({
+        success: false,
+        message: 'Instructor not found'
+      });
+    }
+
+    instructor.approvalStatus = 'approved';
+    instructor.isActive = true;
+    instructor.approvedBy = req.user._id; // Admin who approved
+    instructor.approvedAt = Date.now();
+    await instructor.save();
+
+    res.status(200).json({
+      success: true,
+      message: 'Instructor approved successfully',
+      data: instructor
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Error approving instructor',
+      error: error.message
+    });
+  }
+};
+
+// @desc    Decline instructor application
+// @route   PUT /api/admin/decline-instructor/:id
+// @access  Private/Admin
+exports.declineInstructor = async (req, res) => {
+  try {
+    const instructor = await Instructor.findById(req.params.id);
+
+    if (!instructor) {
+      return res.status(404).json({
+        success: false,
+        message: 'Instructor not found'
+      });
+    }
+
+    instructor.approvalStatus = 'declined';
+    instructor.isActive = false;
+    await instructor.save();
+
+    res.status(200).json({
+      success: true,
+      message: 'Instructor application declined',
+      data: instructor
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Error declining instructor',
       error: error.message
     });
   }

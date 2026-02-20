@@ -35,7 +35,11 @@ const AdminProfile = () => {
     }
   }, [user]);
 
-  if (!isAuth || user?.userType !== 'admin') {
+  if (user === null) {
+    return null;
+  }
+
+  if (isAuth && user?.userType !== 'admin') {
     navigate('/login');
     return null;
   }

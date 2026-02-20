@@ -125,3 +125,63 @@ export const getStoredUser = () => {
   const user = localStorage.getItem('user');
   return user ? JSON.parse(user) : null;
 };
+
+// Update user profile (JSON, no file)
+export const updateProfile = async (profileData) => {
+  try {
+    const token = localStorage.getItem('token');
+    
+    if (!token) {
+      throw new Error('No authentication token found');
+    }
+
+    const response = await fetch(`${API_URL}/auth/update-profile`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify(profileData)
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || 'Failed to update profile');
+    }
+
+    return data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+// Upload profile photo only
+export const updateProfilePhoto = async (formData) => {
+  try {
+    const token = localStorage.getItem('token');
+    
+    if (!token) {
+      throw new Error('No authentication token found');
+    }
+
+    const response = await fetch(`${API_URL}/auth/update-photo`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`
+      },
+      body: formData
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || 'Failed to update profile photo');
+    }
+
+    return data;
+  } catch (error) {
+    throw error;
+  }
+};
+

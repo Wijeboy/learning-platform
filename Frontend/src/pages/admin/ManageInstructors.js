@@ -12,11 +12,14 @@ const ManageInstructors = () => {
   const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
-    if (!isAuth || user?.userType !== 'admin') {
+    // Wait for auth to initialize
+    if (user === null) return;
+    
+    if (isAuth && user?.userType === 'admin') {
+      fetchInstructors();
+    } else {
       navigate('/login');
-      return;
     }
-    fetchInstructors();
   }, [isAuth, user, navigate]);
 
   const fetchInstructors = async () => {
