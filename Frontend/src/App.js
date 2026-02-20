@@ -35,7 +35,7 @@ function App() {
               <Route path="/signup" element={<SignUp />} />
               <Route path="/InstructorDetails" element={<InstructorDetails />} />
                <Route path="/ContactPage" element={<ContactPage />} />
-                <Route path="/Shopdetails" element={<Shopdetails />} />
+                <Route path="/details/:id" element={<Shopdetails />} />
                 <Route path="/ShopPage" element={<ShopPage />} />
               {/* Add more routes as needed */}
             </Routes>

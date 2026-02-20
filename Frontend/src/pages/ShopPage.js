@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './ShopPage.css';
+import { useNavigate } from 'react-router-dom';
 
 const ShopPage = () => {
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
-
+  const navigate = useNavigate();
   // Filter States
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [selectedLanguage, setSelectedLanguage] = useState("All");
@@ -146,7 +147,7 @@ const ShopPage = () => {
                       <span className="price">{course.price}</span>
                       <button 
                         className="enroll-btn"
-                        onClick={() => window.location.href=`/details/${course._id}`}
+                        onClick={() => navigate(`/details/${course._id}`)}
                       >
                         View Details
                       </button>
