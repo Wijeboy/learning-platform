@@ -255,3 +255,27 @@
   .sidebar { position: static; }
   .course-grid { grid-template-columns: repeat(2, 1fr); }
 }
+
+.page-wrapper {
+    margin-top: 100px !important; 
+    min-height: 100vh;
+    display: block;
+    overflow: visible;
+}
+
+/* Center to Container  */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    position: relative;
+    z-index: 1; 
+}
+
+/* shoe the Header text  */
+.page-header {
+    background: #f3f0ff;
+    padding: 40px 0;
+    margin-bottom: 20px;
+    width: 100%;
+}

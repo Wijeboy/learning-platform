@@ -7,7 +7,15 @@ import AdminLayout from './components/AdminLayout';
 import InstructorLayout from './components/InstructorLayout';
 import SignUp from './pages/SignUp';
 import Login from './pages/Login';
+
+
+import ContactPage from './pages/ContactPage';
+import InstructorDetails from './pages/InstructorDetails';
+import Shopdetails from './pages/Shopdetails';
+import ShopPage from './pages/ShopPage'; 
+
 import Home from './pages/Home';
+
 import AdminDashboard from './pages/admin/AdminDashboard';
 import ManageStudents from './pages/admin/ManageStudents';
 import ManageInstructors from './pages/admin/ManageInstructors';
@@ -95,7 +103,28 @@ function App() {
   return (
     <Router>
       <AuthProvider>
+
+
+        <div className="App">
+          <Navbar />
+          <main style={{ flex: 1 }}>
+            <Routes>
+              <Route path="/" element={<Login />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/signup" element={<SignUp />} />
+              <Route path="/InstructorDetails" element={<InstructorDetails />} />
+               <Route path="/ContactPage" element={<ContactPage />} />
+                <Route path="/details/:id" element={<Shopdetails />} />
+                <Route path="/ShopPage" element={<ShopPage />} />
+              {/* Add more routes as needed */}
+            </Routes>
+          </main>
+          <Footer />
+        </div>
+
+
         <InactivityTimeout />
+
         <Routes>
           {/* Public Routes with Navbar and Footer */}
           <Route path="/" element={

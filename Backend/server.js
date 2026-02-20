@@ -11,6 +11,8 @@ dotenv.config();
 // Import routes
 const authRoutes = require('./routes/authRoutes');
 const adminRoutes = require('./routes/adminRoutes');
+
+
 const instructorRoutes = require('./routes/instructorRoutes');
 const courseRoutes = require('./routes/courseRoutes');
 const enrollmentRoutes = require('./routes/enrollmentRoutes');
@@ -19,6 +21,7 @@ const cartRoutes = require('./routes/cartRoutes');
 const purchaseRoutes = require('./routes/purchaseRoutes');
 const eventRoutes = require('./routes/eventRoutes');
 const blogRoutes = require('./routes/blogRoutes');
+
 
 // Initialize express app
 const app = express();
@@ -39,6 +42,9 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/admin', adminRoutes);
+
+app.use('/api/shops', shopRoutes);
+
 app.use('/api/instructor', instructorRoutes);
 app.use('/api/courses', courseRoutes);
 app.use('/api/enrollments', enrollmentRoutes);
@@ -47,6 +53,7 @@ app.use('/api/cart', cartRoutes);
 app.use('/api/purchases', purchaseRoutes);
 app.use('/api/events', eventRoutes);
 app.use('/api/blogs', blogRoutes);
+
 
 // Health check route
 app.get('/', (req, res) => {
