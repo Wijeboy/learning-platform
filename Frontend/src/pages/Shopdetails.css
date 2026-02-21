@@ -1,281 +1,241 @@
-/* --- 1. Global & Wrapper --- */
-.page-wrapper {
-  background-color: #fcfcff;
-  color: #0a033c;
-  font-family: 'Inter', sans-serif;
-  padding-bottom: 100px;
-  width: 100%;
+:root {
+  --primary: #2563eb;
+  --dark: #1e293b;
+  --text: #475569;
+  --white: #ffffff;
+  --bg: #f8fafc;
 }
 
-/* Fix: Changed 'auto' to 1200px for a full-page feel */
-.container {
-  max-width: 1200px; 
-  margin: 0 auto;
-  padding: 0 20px;
-  width: 100%;
+.course-details-wrapper {
+  background-color: var(--bg);
+  min-height: 100vh;
 }
 
-/* --- 2. Header Section --- */
-.page-header {
-  width: 100%;
-  padding: 24px 0 32px 0; /* smaller, more “normal” header */
-  background: linear-gradient(to right, #fdfbff, #f3f0ff);
-  margin-bottom: 0;
-  text-align: left;
-}
-
-.page-header .container {
-  text-align: left;
-}
-
-.page-header h1 {
-  font-size: 36px;
-  font-weight: 800;
-  margin-bottom: 8px;
-  text-align: left;
+/* Header Section */
+.details-header {
+  background-color: var(--dark);
+  color: var(--white);
+  padding: 60px 0;
+  margin-bottom: 40px;
 }
 
 .breadcrumb {
   font-size: 14px;
-  color: #5e6282;
+  color: #94a3b8;
+  margin-bottom: 20px;
 }
 
-.breadcrumb span {
-  color: #6366f1;
-  font-weight: 600;
+.breadcrumb .active {
+  color: #38bdf8;
 }
 
-/* --- 3. Main Layout Split --- */
-.main-layout {
-  display: grid;
-  grid-template-columns: 1fr 380px; 
-  gap: 40px;
-  align-items: start;
-  margin-top: 24px; /* normal spacing under header */
-  position: relative;
-  z-index: 10;
+.main-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 20px;
 }
 
-/* --- 4. Content Cards --- */
-.course-intro-card, .learning-goals {
-  background: white;
-  padding: 40px;
+.quick-meta {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+}
+
+.badge {
+  background: var(--primary);
+  padding: 5px 15px;
   border-radius: 20px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+  font-size: 12px;
+  text-transform: uppercase;
+}
+
+/* Grid Layout */
+.main-content-grid {
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  gap: 40px;
+  padding-bottom: 100px;
+}
+
+/* Content Cards */
+.content-card {
+  background: var(--white);
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
   margin-bottom: 30px;
 }
 
-.course-title {
-  font-size: 28px;
-  margin: 15px 0;
-  line-height: 1.3;
+.content-card h3 {
+  font-size: 20px;
+  margin-bottom: 20px;
+  color: var(--dark);
 }
 
-.learning-goals {
-  background-color: #f8f9fc;
-  border: 1px solid #eef0f7;
+.description-text {
+  color: var(--text);
+  line-height: 1.8;
 }
 
-.goals-list {
+.learning-points {
   list-style: none;
-  margin-top: 20px;
+  padding: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
 }
 
-.goals-list li {
-  margin-bottom: 12px;
-  padding-left: 20px;
+.learning-points li {
+  color: var(--text);
+  font-size: 15px;
+}
+
+/* Sticky Sidebar */
+.details-sidebar {
   position: relative;
-  color: #5e6282;
 }
 
-.goals-list li::before {
-  content: "•";
-  color: #6366f1;
-  font-weight: bold;
-  position: absolute;
-  left: 0;
-}
-
-/* --- 5. Sticky Sidebar & Video --- */
-.sidebar {
+.sticky-card {
   position: sticky;
   top: 100px;
-}
-
-.purchase-card {
-  background: white;
-  border-radius: 20px;
-  padding: 25px;
-  box-shadow: 0 20px 50px rgba(0,0,0,0.1);
-}
-
-.video-preview {
-  border-radius: 15px;
+  background: var(--white);
+  border-radius: 12px;
   overflow: hidden;
-  margin-bottom: 20px;
+  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+}
+
+.preview-video {
   position: relative;
+  height: 200px;
 }
 
-.video-preview img {
+.preview-video img {
   width: 100%;
-  display: block;
+  height: 100%;
+  object-fit: cover;
 }
 
-/* New: Play Button Styling */
-.play-button-overlay {
+.play-btn {
   position: absolute;
-  top: 0; left: 0; width: 100%; height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(0, 0, 0, 0.2);
-  cursor: pointer;
-}
-
-.play-icon {
-  background: white;
-  color: #6366f1;
-  width: 50px;
-  height: 50px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(255, 255, 255, 0.9);
+  width: 60px;
+  height: 60px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 20px;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+  font-size: 24px;
+  cursor: pointer;
+  transition: 0.3s;
 }
 
-.price-section {
+.play-btn:hover {
+  transform: translate(-50%, -50%) scale(1.1);
+  background: var(--white);
+}
+
+.price-tag {
+  padding: 25px;
   display: flex;
   align-items: center;
   gap: 15px;
-  margin: 20px 0;
 }
 
-.current-price { font-size: 32px; font-weight: 800; }
-.discount-tag { color: #ff4d4d; font-weight: bold; }
-
-.btn {
-  width: 100%;
-  padding: 16px;
-  border-radius: 12px;
-  border: none;
-  font-weight: 700;
-  cursor: pointer;
-  margin-bottom: 12px;
-  transition: all 0.2s ease;
-}
-
-.btn-start { background: #6366f1; color: white; }
-.btn-purchase { background: #e2e8f0; color: #475569; }
-.btn:hover { opacity: 0.9; transform: translateY(-2px); }
-
-.course-features p {
+.amount {
+  font-size: 32px;
   font-weight: 800;
-  font-size: 12px;
-  margin-bottom: 15px;
-}
-
-.course-features ul { list-style: none; }
-
-.course-features li {
-  font-size: 13px;
-  padding: 8px 0;
-  border-bottom: 1px solid #f1f1f1;
-  color: #5e6282;
-}
-
-/* --- 6. Related Courses Grid --- */
-.related-section { margin-top: 80px; }
-.section-title { font-size: 24px; margin-bottom: 30px; }
-.yellow-bg { background: #ffe600; padding: 2px 10px; border-radius: 6px; }
-
-.course-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 25px;
-}
-
-.course-card {
-  background: white;
-  border-radius: 15px;
-  border: 1px solid #f1f1f1;
-  overflow: hidden;
-  transition: transform 0.3s ease;
-}
-
-.course-card:hover { transform: translateY(-10px); }
-
-.card-thumb {
-  height: 160px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;      /* Centers the image in the colored box */
-  border-bottom: 1px solid #f8f9fc;
-  
-}
-
-
-/* New: Icon Image Styling */
-.card-icon-img {
-  width:200px;
-  height: 120px;
- border-radius: 15px;
- overflow: hidden;
-
-}
-
-.card-info { padding: 20px; text-align: center; }
-
-.star-icons {
-  color: #ffb800;
-  margin-right: 5px;
-}
-
-.card-price {
-  margin-top: 10px;
-  font-weight: 700;
-  color: #6366f1;
+  color: var(--dark);
 }
 
 .old-price {
   text-decoration: line-through;
-  color: #adb5bd;
+  color: #94a3b8;
+}
+
+.action-buttons {
+  padding: 0 25px 25px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.btn-enroll {
+  background: var(--primary);
+  color: white;
+  border: none;
+  padding: 15px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.btn-enroll:hover {
+  background: #1d4ed8;
+}
+
+.btn-wishlist {
+  background: white;
+  color: var(--dark);
+  border: 1px solid #cbd5e1;
+  padding: 15px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.course-includes {
+  padding: 25px;
+  background: #f1f5f9;
+}
+
+.course-includes h4 {
+  margin-bottom: 15px;
+  font-size: 16px;
+}
+
+.course-includes ul {
+  list-style: none;
+  padding: 0;
+}
+
+.course-includes li {
+  margin-bottom: 10px;
   font-size: 14px;
-  margin-left: 10px;
+  color: var(--text);
 }
 
-/* --- 7. Responsive --- */
+/* Loader */
+.loader-container {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.loader {
+  border: 5px solid #f3f3f3;
+  border-top: 5px solid var(--primary);
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Mobile Responsive */
 @media (max-width: 992px) {
-  .main-layout { 
-    grid-template-columns: 1fr; 
-    margin-top: 20px;
+  .main-content-grid {
+    grid-template-columns: 1fr;
   }
-  .sidebar { position: static; }
-  .course-grid { grid-template-columns: repeat(2, 1fr); }
-}
-
-.page-wrapper {
-    margin-top: 100px !important; 
-    min-height: 100vh;
-    display: block;
-    overflow: visible;
-}
-
-/* Center to Container  */
-.container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 20px;
-    position: relative;
-    z-index: 1; 
-}
-
-/* shoe the Header text  */
-.page-header {
-    background: #f3f0ff;
-    padding: 40px 0;
-    margin-bottom: 20px;
-    width: 100%;
+  .details-sidebar {
+    order: -1;
+  }
 }
