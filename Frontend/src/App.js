@@ -5,6 +5,8 @@ import Footer from './components/Footer';
 import SignUp from './pages/SignUp';
 import './App.css';
 import CourseDetails from './pages/CourseDetails';
+import Course from './Course';  
+
 
 function App() {
   return (
@@ -19,8 +21,12 @@ function App() {
             <Routes>
             <Route path="CourseDetails" element={<CourseDetails />} />
             <Route path="/CCourseDetails" element={<CourseDetails />} />
+            {/* This shows the Course page */}
+           <Route path="/Course/:id" element={<Course />} />
             </Routes>
-          </Routes>
+
+            </Routes>
+          
           
         </main>
         <Footer />
