@@ -31,15 +31,17 @@ const InstructorStudents = () => {
       ]);
       
       setCourses(coursesData);
-      setEnrollments(enrollmentsData);
+      // Filter out enrollments with null student or course references
+      const validEnrollments = enrollmentsData.filter(e => e.student && e.course);
+      setEnrollments(validEnrollments);
       
       // Calculate stats
-      const uniqueStudents = new Set(enrollmentsData.map(e => e.student._id)).size;
-      const completed = enrollmentsData.filter(e => e.completionPercentage === 100).length;
-      const avgProgress = enrollmentsData.length > 0
-        ? enrollmentsData.reduce((acc, e) => acc + e.completionPercentage, 0) / enrollmentsData.length
+      const uniqueStudents = new Set(validEnrollments.map(e => e.student._id)).size;
+      const completed = validEnrollments.filter(e => e.completionPercentage === 100).length;
+      const avgProgress = validEnrollments.length > 0
+        ? validEnrollments.reduce((acc, e) => acc + e.completionPercentage, 0) / validEnrollments.length
         : 0;
-      const active = enrollmentsData.filter(e => e.completionPercentage > 0 && e.completionPercentage < 100).length;
+      const active = validEnrollments.filter(e => e.completionPercentage > 0 && e.completionPercentage < 100).length;
       
       setStats({
         totalStudents: uniqueStudents,
@@ -55,11 +57,12 @@ const InstructorStudents = () => {
   };
 
   const filteredEnrollments = enrollments.filter(enrollment => {
+    if (!enrollment.student || !enrollment.course) return false;
     const matchesCourse = selectedCourse === 'all' || enrollment.course._id === selectedCourse;
     const matchesSearch = searchQuery === '' || 
-      enrollment.student.firstName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      enrollment.student.lastName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      enrollment.student.email.toLowerCase().includes(searchQuery.toLowerCase());
+      (enrollment.student.firstName || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (enrollment.student.lastName || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (enrollment.student.email || '').toLowerCase().includes(searchQuery.toLowerCase());
     
     return matchesCourse && matchesSearch;
   });
@@ -163,15 +166,15 @@ const InstructorStudents = () => {
                   <div className="col-student">
                     <div className="student-info">
                       <div className="student-avatar">
-                        {enrollment.student.firstName.charAt(0).toUpperCase()}
+                        {(enrollment.student?.firstName || '?').charAt(0).toUpperCase()}
                       </div>
                       <div className="student-details">
                         <div className="student-name">
-                          {enrollment.student.firstName} {enrollment.student.lastName}
+                          {enrollment.student?.firstName || ''} {enrollment.student?.lastName || ''}
                         </div>
                         <div className="student-email">
                           <FiMail size={12} />
-                          {enrollment.student.email}
+                          {enrollment.student?.email || 'N/A'}
                         </div>
                       </div>
                     </div>

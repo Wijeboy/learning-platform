@@ -14,6 +14,9 @@
 }
 
 .analytics-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
   margin-bottom: 2rem;
 }
 
@@ -27,6 +30,27 @@
   font-size: 1rem;
   color: #666;
   margin: 0;
+}
+
+.btn-refresh-analytics {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.6rem 1.2rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.btn-refresh-analytics:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
 }
 
 /* Overview Stats */

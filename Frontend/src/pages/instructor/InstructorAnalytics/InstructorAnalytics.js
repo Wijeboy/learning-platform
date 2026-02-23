@@ -29,17 +29,21 @@ const InstructorAnalytics = () => {
 
   const fetchAnalytics = async () => {
     try {
+      setLoading(true);
       const [coursesData, enrollmentsData] = await Promise.all([
         getInstructorCourses(),
         getInstructorEnrollments()
       ]);
-      
+
+      // Filter out enrollments with null student or course references
+      const validEnrollments = enrollmentsData.filter(e => e.student && e.course);
+
       setCourses(coursesData);
-      setEnrollments(enrollmentsData);
+      setEnrollments(validEnrollments);
       
       // Calculate overview stats
-      const totalRevenue = enrollmentsData.reduce((sum, e) => sum + (e.paymentAmount || 0), 0);
-      const uniqueStudents = new Set(enrollmentsData.map(e => e.student._id)).size;
+      const totalRevenue = validEnrollments.reduce((sum, e) => sum + (e.paymentAmount || 0), 0);
+      const uniqueStudents = new Set(validEnrollments.map(e => e.student._id)).size;
       const totalCourses = coursesData.length;
       const publishedCourses = coursesData.filter(c => c.isPublished).length;
       
@@ -47,18 +51,18 @@ const InstructorAnalytics = () => {
         ? coursesData.reduce((sum, c) => sum + (c.rating || 0), 0) / coursesData.length
         : 0;
       
-      const completedEnrollments = enrollmentsData.filter(e => e.completionPercentage === 100).length;
-      const completionRate = enrollmentsData.length > 0
-        ? (completedEnrollments / enrollmentsData.length) * 100
+      const completedEnrollments = validEnrollments.filter(e => e.completionPercentage === 100).length;
+      const completionRate = validEnrollments.length > 0
+        ? (completedEnrollments / validEnrollments.length) * 100
         : 0;
       
-      const activeStudents = enrollmentsData.filter(
+      const activeStudents = validEnrollments.filter(
         e => e.completionPercentage > 0 && e.completionPercentage < 100
       ).length;
       
       // Calculate course performance
       const coursePerformance = coursesData.map(course => {
-        const courseEnrollments = enrollmentsData.filter(e => e.course._id === course._id);
+        const courseEnrollments = validEnrollments.filter(e => e.course._id === course._id);
         const revenue = courseEnrollments.reduce((sum, e) => sum + (e.paymentAmount || 0), 0);
         const avgProgress = courseEnrollments.length > 0
           ? courseEnrollments.reduce((sum, e) => sum + e.completionPercentage, 0) / courseEnrollments.length
@@ -103,8 +107,13 @@ const InstructorAnalytics = () => {
   return (
     <div className="instructor-analytics-page">
       <div className="analytics-header">
-        <h1>Analytics & Reports</h1>
-        <p>Track your teaching performance and course statistics</p>
+        <div>
+          <h1>Analytics & Reports</h1>
+          <p>Track your teaching performance and course statistics</p>
+        </div>
+        <button className="btn-refresh-analytics" onClick={fetchAnalytics}>
+          ↻ Refresh
+        </button>
       </div>
 
       {/* Overview Stats */}
